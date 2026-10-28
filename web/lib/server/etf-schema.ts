@@ -28,7 +28,9 @@ export const UsEtfSchema = z.object({
   retrieved_at: isoDate,
   source_url: httpsUrl,
   evidence_urls: z.array(httpsUrl),
-  quotes: z.object({ ter: nonEmpty, aum: nonEmpty, exchange: nonEmpty, index: nonEmpty }),
+  quotes: z
+    .object({ ter: nonEmpty, aum: nonEmpty, exchange: nonEmpty, index: nonEmpty })
+    .catchall(nonEmpty),
   ucits_twin_ids: z.array(isin),
 });
 
@@ -50,12 +52,15 @@ export const UcitsEtfSchema = z.object({
   retrieved_at: isoDate,
   source_url: httpsUrl,
   evidence_urls: z.array(httpsUrl),
-  quotes: z.object({
-    ter: nonEmpty,
-    aum: nonEmpty,
-    isin: nonEmpty,
-    registration: nonEmpty.optional(),
-  }),
+  quotes: z
+    .object({
+      ter: nonEmpty,
+      aum: nonEmpty,
+      isin: nonEmpty,
+      registration: nonEmpty.optional(),
+    })
+    // Extra verbatim quotes (e.g. "index") are kept so the response equals the data file.
+    .catchall(nonEmpty),
   us_counterparts: z.array(usTicker),
   index_match: z.record(z.string(), z.enum(["same", "similar"])),
 });
