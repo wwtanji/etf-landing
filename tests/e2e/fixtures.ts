@@ -33,14 +33,18 @@ export const test = base.extend<Fixtures>({
     });
     await use(seen);
   },
-  umamiScriptRequests: async ({ page }, use) => {
-    const seen: string[] = [];
-    await page.route(UMAMI_SCRIPT_URL, async (route) => {
-      seen.push(route.request().url());
-      await route.fulfill({ status: 200, contentType: "application/javascript", body: UMAMI_STUB });
-    });
-    await use(seen);
-  },
+  // auto: every test gets the stub, so Umami never resolves to the (non-existent) real host.
+  umamiScriptRequests: [
+    async ({ page }, use) => {
+      const seen: string[] = [];
+      await page.route(UMAMI_SCRIPT_URL, async (route) => {
+        seen.push(route.request().url());
+        await route.fulfill({ status: 200, contentType: "application/javascript", body: UMAMI_STUB });
+      });
+      await use(seen);
+    },
+    { auto: true },
+  ],
   page: async ({ page }, use) => {
     // Own rate-limit bucket per test (memory driver, 5 POST / 600 s per IP).
     ipCounter += 1;
@@ -58,8 +62,17 @@ export { expect, type Page };
 /** Collapse all whitespace (incl. U+00A0 / U+202F from cs-CZ formatting) to single spaces. */
 export const norm = (s: string | null | undefined): string => (s ?? "").replace(/[\s\u00a0\u202f]+/g, " ").trim();
 
+/** Rendered text (innerText) with CSS text-transform neutralised, so copy is compared as authored. */
 export async function textOf(loc: Locator): Promise<string> {
-  return norm(await loc.innerText());
+  const text = await loc.evaluate((el) => {
+    const style = document.createElement("style");
+    style.textContent = "*{text-transform:none!important}";
+    document.head.append(style);
+    const t = (el as HTMLElement).innerText;
+    style.remove();
+    return t;
+  });
+  return norm(text);
 }
 
 export async function lpEvents(page: Page): Promise<LpEvent[] | null> {

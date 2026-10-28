@@ -189,7 +189,7 @@ test.describe("lead form (plan §5.4)", () => {
     await page.getByTestId("lead-consent").check();
     await page.getByTestId("lead-submit").click();
     await expect(page.getByTestId("lead-submit")).toBeDisabled();
-    expect(norm(await page.getByTestId("lead-submit").innerText())).toBe("Odemykám…");
+    expect(await textOf(page.getByTestId("lead-submit"))).toBe("Odemykám…");
     release();
     await expect(page.getByTestId("thank-you")).toBeVisible();
   });

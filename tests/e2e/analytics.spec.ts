@@ -98,7 +98,12 @@ test.describe("analytics consent gating (plan §9.2–9.3)", () => {
     await page.getByTestId("consent-settings").click();
     await expect(page.getByTestId("consent-bar")).toBeVisible();
     await page.getByTestId("consent-accept").click();
-    await waitForEvent(page, "lp_view");
+    await expect(page.getByTestId("consent-bar")).toBeHidden();
+    expect(await page.evaluate(() => localStorage.getItem("lp_analytics_consent"))).toBe("granted");
+    // Events dropped while denied stay dropped (§9.2 deny clears the queue); new ones are recorded.
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await page.getByTestId("hero-cta").click();
+    await waitForEvent(page, "cta_click", (p) => p.location === "hero");
   });
 });
 

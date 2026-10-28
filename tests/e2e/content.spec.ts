@@ -103,7 +103,8 @@ test("privacy-link goes to /soukromi and the notice renders", async ({ page }) =
   await link.click();
   await expect(page).toHaveURL(/\/soukromi$/);
   const t = await textOf(page.locator("body"));
-  for (const s of ["Správce", "e-mail", "čl. 6 odst. 1 písm. a) GDPR", "Upstash", "Umami", "24 měsíců", "ÚOOÚ", "lp_analytics_consent", "lp_unlocked"]) {
+  // §5.8 lists section topics (not verbatim copy): the complaint authority is identified by its site.
+  for (const s of ["Správce", "e-mail", "čl. 6 odst. 1 písm. a) GDPR", "Upstash", "Umami", "24 měsíců", "uoou.gov.cz", "lp_analytics_consent", "lp_unlocked"]) {
     expect(t, s).toContain(s);
   }
 });
