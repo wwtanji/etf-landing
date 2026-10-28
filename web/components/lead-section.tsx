@@ -2,6 +2,8 @@
 
 import { useEffect, useId, useRef, useState, type FormEvent, type RefObject } from "react";
 import { track } from "@/lib/analytics";
+import { feeSpreadCzk, totalFeeCzk } from "@/lib/fees";
+import { formatCzk } from "@/lib/format";
 import { CONSENT_VERSION } from "@/lib/server/config";
 import { SECTION_IDS } from "@/lib/sections";
 import { markUnlocked, useUnlocked } from "@/lib/ui-store";
@@ -148,12 +150,12 @@ function LeadForm({ onSuccess }: { onSuccess: () => void }) {
 
   return (
     <div data-testid="lead-form">
-      <SectionLabel index="03">Evropské protějšky</SectionLabel>
+      <SectionLabel index="03">Evropské alternativy</SectionLabel>
       <h2 className="font-display text-[1.75rem] leading-[1.1] font-semibold tracking-tight">
         Které evropské ETF sledují stejný index?
       </h2>
       <p className="mt-3 leading-relaxed text-paper/85">
-        Odemkněte přehled evropských (UCITS) protějšků: ISIN pro vyhledání u brokera, TER a zdroj.
+        Odemkněte přehled evropských (UCITS) alternativ: ISIN pro vyhledání u brokera, TER a zdroj.
         Ukážeme ho hned tady na stránce.
       </p>
 
@@ -210,7 +212,7 @@ function LeadForm({ onSuccess }: { onSuccess: () => void }) {
             <a href="/soukromi" className="link" target="_blank" rel="noopener">
               zásad ochrany osobních údajů
             </a>
-            . Souhlas můžu kdykoli odvolat.
+            . Souhlas mohu kdykoli odvolat.
           </label>
         </div>
 
@@ -237,7 +239,7 @@ function LeadForm({ onSuccess }: { onSuccess: () => void }) {
 }
 
 function ThankYou({ headingRef }: { headingRef: RefObject<HTMLHeadingElement | null> }) {
-  const { etfA, etfB, etfByTicker, ucitsByIsin, ucits } = useLanding();
+  const { etfA, etfB, etfByTicker, ucitsByIsin, ucits, amount, years } = useLanding();
   const a = etfByTicker.get(etfA);
   const b = etfByTicker.get(etfB);
   if (!a || !b) throw new Error(`ThankYou: unknown ticker ${etfA}/${etfB}`);
@@ -249,7 +251,10 @@ function ThankYou({ headingRef }: { headingRef: RefObject<HTMLHeadingElement | n
   const allSame = twins.every((t) => tickers.some((ticker) => t.index_match[ticker] === "same"));
 
   const compared = tickers.length === 1 ? a.ticker : `${a.ticker} a ${b.ticker}`;
-  const indexes = a.index === b.index ? a.index : `${a.index} a ${b.index}`;
+  const indexA = a.index.replace(/ Index$/, "");
+  const indexB = b.index.replace(/ Index$/, "");
+  const indexLabel = indexA === indexB ? `index ${indexA}` : `indexy ${indexA} a ${indexB}`;
+  const twinFees = twins.map((twin) => totalFeeCzk(amount, twin.ter_pct, years));
 
   return (
     <div data-testid="thank-you">
@@ -259,16 +264,24 @@ function ThankYou({ headingRef }: { headingRef: RefObject<HTMLHeadingElement | n
         tabIndex={-1}
         className="font-display text-[1.75rem] leading-[1.1] font-semibold tracking-tight outline-none"
       >
-        Hotovo. Tady jsou evropské protějšky.
+        Hotovo. Tady jsou evropské alternativy.
       </h2>
       <p data-testid="thank-you-intro" className="mt-3 leading-relaxed text-paper/85">
-        Porovnávali jste {compared} ({indexes}).{" "}
+        Porovnávali jste {compared} ({indexLabel}).{" "}
         {twins.length === 0
-          ? "Pro tato ETF nemáme v přehledu evropský protějšek. Ostatní evropská ETF najdete níže."
+          ? "Pro tato ETF nemáme v přehledu evropskou alternativu. Ostatní evropská ETF najdete níže."
           : allSame
             ? "Stejný index sledují tato evropská ETF:"
             : "Stejný nebo podobný index sledují tato evropská ETF:"}
       </p>
+
+      {twins.length > 0 && (
+        <p data-testid="thank-you-fees" className="mt-3 leading-relaxed text-paper/85">
+          Poplatek fondu za {years} let při {formatCzk(amount)}:{" "}
+          {twins.map((twin, i) => `${twin.ticker} ${formatCzk(twinFees[i])}`).join(", ")}
+          {twins.length >= 2 && ` (rozdíl ${formatCzk(feeSpreadCzk(twinFees))})`}.
+        </p>
+      )}
 
       {twins.length > 0 && (
         <ul className="mt-5 space-y-3">
@@ -295,7 +308,9 @@ function ThankYou({ headingRef }: { headingRef: RefObject<HTMLHeadingElement | n
         <h3 className="font-display text-xl font-semibold">Než něco koupíte</h3>
         <ol>
           <li>U brokera hledejte podle ISIN. Tickery se na evropských burzách liší.</li>
-          <li>Ověřte, že k ETF je k dispozici dokument KID. Bez něj vám ho broker zpravidla neprodá.</li>
+          <li>
+            Ověřte, že k ETF je k dispozici dokument KID. Bez něj vám ho broker zpravidla neprodá.
+          </li>
           <li>Porovnejte nejen TER, ale i poplatky brokera a za převod měny.</li>
           <li>Akumulační ETF dividendy reinvestuje, distribuční je vyplácí.</li>
         </ol>

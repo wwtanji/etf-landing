@@ -7,15 +7,15 @@ import {
   AMOUNT_MAX_CZK,
   AMOUNT_MIN_CZK,
   DEFAULT_AMOUNT_CZK,
-  DEFAULT_YEARS,
   YEARS_CHIPS,
+  feeSpreadCzk,
   isValidAmount,
   totalFeeCzk,
 } from "@/lib/fees";
 import { formatCzk, formatInteger, formatTer } from "@/lib/format";
 import { GROUP_LABELS, groupEtfs, type EtfGroupSection } from "@/lib/labels";
 import type { UsEtfView } from "@/lib/landing-data";
-import { useUnlocked } from "@/lib/ui-store";
+import { setUnlockCtaInView, useUnlocked } from "@/lib/ui-store";
 import { useLanding, twinsOf } from "@/components/landing-provider";
 import { ScrollLink } from "@/components/scroll-cta";
 import { SECTION_IDS } from "@/lib/sections";
@@ -28,17 +28,38 @@ const AMOUNT_MAX_DIGITS = 12;
 type CalcControl = "amount_chip" | "amount_input" | "years" | "etf_a" | "etf_b";
 type CalcState = { amount: number; years: number; etfA: string; etfB: string };
 
+/** Stable callback ref: reports `calc-unlock-cta` visibility to the sticky CTA (§3). */
+function observeUnlockCta(element: HTMLAnchorElement | null) {
+  if (!element) return;
+  const observer = new IntersectionObserver(([entry]) => setUnlockCtaInView(entry.isIntersecting));
+  observer.observe(element);
+  return () => {
+    observer.disconnect();
+    setUnlockCtaInView(false);
+  };
+}
+
 export function Calculator() {
-  const { etfs, ucitsByIsin, etfByTicker, etfA, etfB, setEtfA, setEtfB } = useLanding();
+  const {
+    etfs,
+    ucitsByIsin,
+    etfByTicker,
+    etfA,
+    etfB,
+    setEtfA,
+    setEtfB,
+    amount,
+    years,
+    setAmount,
+    setYears,
+  } = useLanding();
   const unlocked = useUnlocked();
   const amountId = useId();
   const etfAId = useId();
   const etfBId = useId();
 
-  const [amount, setAmount] = useState(DEFAULT_AMOUNT_CZK);
   const [amountText, setAmountText] = useState(formatInteger(DEFAULT_AMOUNT_CZK));
   const [amountError, setAmountError] = useState(false);
-  const [years, setYears] = useState(DEFAULT_YEARS);
 
   const interacted = useRef(new Set<CalcControl>());
   const resultTimer = useRef<number | undefined>(undefined);
@@ -96,6 +117,7 @@ export function Calculator() {
   const feeB = totalFeeCzk(amount, b.ter_pct, years);
   const diff = Math.round(Math.abs(feeA - feeB));
   const twins = twinsOf([etfA, etfB], etfByTicker, ucitsByIsin);
+  const twinFees = twins.map((twin) => totalFeeCzk(amount, twin.ter_pct, years));
   const groups = groupEtfs(etfs);
   const cheaper = feeA === feeB ? null : feeA < feeB ? "a" : "b";
 
@@ -146,7 +168,11 @@ export function Calculator() {
                 Zadejte částku {formatInteger(AMOUNT_MIN_CZK)} – {formatInteger(AMOUNT_MAX_CZK)} Kč
               </p>
             )}
-            <div className="mt-2.5 flex flex-wrap gap-2" role="group" aria-label="Rychlá volba částky">
+            <div
+              className="mt-2.5 flex flex-wrap gap-2"
+              role="group"
+              aria-label="Rychlá volba částky"
+            >
               {AMOUNT_CHIPS_CZK.map((chip) => (
                 <button
                   key={chip}
@@ -221,7 +247,7 @@ export function Calculator() {
           )}
         </div>
 
-        <div data-testid="calc-result" className="receipt mt-7">
+        <div data-testid="calc-result" data-value="calc" className="receipt mt-7">
           <div className="receipt-head">
             <span>Náklady (TER)</span>
             <span>
@@ -230,32 +256,46 @@ export function Calculator() {
           </div>
           <FeeRow testId="calc-fee-a" etf={a} fee={feeA} cheaper={cheaper === "a"} />
           <FeeRow testId="calc-fee-b" etf={b} fee={feeB} cheaper={cheaper === "b"} />
-          <p data-testid="calc-diff" className="receipt-total" aria-live="polite">
+          <p
+            id={SECTION_IDS.calcDiff}
+            data-testid="calc-diff"
+            className="receipt-total"
+            aria-live="polite"
+          >
             <span className="receipt-total-label">Rozdíl za {years} let:</span>{" "}
             <span className="receipt-total-value">{formatCzk(diff)}</span>
           </p>
           <div data-testid="calc-unlock" className="receipt-unlock">
             {twins.length === 0 ? (
-              <p>Pro tento index nemáme v přehledu evropský protějšek.</p>
+              <p>Pro tento index nemáme v přehledu evropskou alternativu.</p>
             ) : unlocked ? (
               <>
-                <p className="font-semibold">Evropský protějšek se stejným indexem:</p>
-                <ul className="mt-1.5 space-y-1">
-                  {twins.map((twin) => (
-                    <li key={twin.isin} className="flex justify-between gap-3">
-                      <span className="font-semibold">{twin.ticker}</span>
-                      <span>TER {formatTer(twin.ter_pct)}</span>
+                <p className="font-semibold">Evropské alternativy pro stejnou částku a dobu:</p>
+                <ul className="mt-1.5 space-y-1 font-mono">
+                  {twins.map((twin, i) => (
+                    <li key={twin.isin} data-testid={`calc-ucits-fee-${twin.isin}`}>
+                      <span className="font-semibold">{twin.ticker}</span> ·{" "}
+                      {formatTer(twin.ter_pct)} · {formatCzk(twinFees[i])}
+                      {twin.index_match[etfA] !== "same" &&
+                        twin.index_match[etfB] !== "same" &&
+                        " · podobný index"}
                     </li>
                   ))}
                 </ul>
+                {twins.length >= 2 && (
+                  <p data-testid="calc-ucits-diff" className="mt-2 font-semibold">
+                    Rozdíl mezi nimi za {years} let: {formatCzk(feeSpreadCzk(twinFees))}
+                  </p>
+                )}
               </>
             ) : (
               <>
                 <p>
-                  Evropský protějšek se stejným indexem:{" "}
-                  <span aria-hidden="true">🔒</span> ISIN a TER po odemčení
+                  Evropská alternativa: <span aria-hidden="true">🔒</span> ISIN, TER a poplatek v Kč
+                  po odemčení
                 </p>
                 <ScrollLink
+                  ref={observeUnlockCta}
                   target={SECTION_IDS.form}
                   location="calc_unlock"
                   testId="calc-unlock-cta"
@@ -269,9 +309,9 @@ export function Calculator() {
         </div>
 
         <p className="mt-4 text-[0.8125rem] leading-relaxed text-ink-soft">
-          Výpočet: poplatek = částka × (1 − (1 − TER)^roky). Bez zhodnocení, poplatků brokera, daní
-          a kurzových rozdílů. Ilustrace nákladů, ne předpověď výnosu. TER a zdroje u každého ETF
-          najdete ve <a href={`#${SECTION_IDS.table}`} className="link">srovnání níže</a>.
+          Počítáme jen poplatek fondu (TER): každý rok si fond strhne TER z hodnoty investice.
+          Zhodnocení, poplatky brokera, daně ani kurzové rozdíly nepočítáme. Ilustrace nákladů, ne
+          předpověď výnosu.
         </p>
       </div>
     </section>

@@ -13,6 +13,11 @@ export function totalFeeCzk(amountCzk: number, terPct: number, years: number): n
   return amountCzk * (1 - Math.pow(1 - terPct / 100, years));
 }
 
+/** Rounded max − min of unrounded fees (§6.1 `calc-ucits-diff`, §13 `thank-you-fees`). */
+export function feeSpreadCzk(fees: number[]): number {
+  return Math.round(Math.max(...fees) - Math.min(...fees));
+}
+
 export function isValidAmount(amountCzk: number): boolean {
   return Number.isInteger(amountCzk) && amountCzk >= AMOUNT_MIN_CZK && amountCzk <= AMOUNT_MAX_CZK;
 }
