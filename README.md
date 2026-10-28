@@ -31,7 +31,7 @@ npm run test:e2e              # playwright test (360×740, builds and starts the
 
 ## 3. Results
 
-- **Automated tests** (docs/test-findings.md, run 2026-10-28 on commit `45befe1`, after critic fix round 1): Vitest **77/77**, Playwright **62/62**, `tsc` clean in `tests/`. Before round 1 (on `5ce2fa5`): Vitest 73/73, Playwright 57/57.
+- **Automated tests** (docs/test-findings.md, run 2026-10-28 on commit `55626d6`, after critic fix round 1 and the code-review fixes): Vitest **77/77**, Playwright **63/63**, `tsc` clean in `tests/`. Before round 1 (on `5ce2fa5`): Vitest 73/73, Playwright 57/57.
 - **Data truthfulness:** the critic re-fetched issuer pages on 2026-10-28 and spot-checked 8 funds / 19 figures: **19 of 19 matched** (docs/critic.md). The hero ratio "4,7×" and the default calculator result (7 369 Kč) were recomputed by hand and match.
 - **Lighthouse:** not run yet.
 - **Real-phone test:** not run yet.
