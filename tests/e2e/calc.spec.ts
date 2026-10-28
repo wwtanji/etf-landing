@@ -109,7 +109,7 @@ test.describe("fee calculator (plan §6)", () => {
 
   test("locked row: twins → lock + CTA; no twins → no-counterpart text", async ({ page }) => {
     const unlock = page.getByTestId("calc-unlock");
-    expect(await textOf(unlock)).toContain("Evropský protějšek se stejným indexem: 🔒 ISIN a TER po odemčení");
+    expect(await textOf(unlock)).toContain("Evropská alternativa: 🔒 ISIN, TER a poplatek v Kč po odemčení");
     expect(await textOf(page.getByTestId("calc-unlock-cta"))).toBe("Odemknout zdarma");
     // Locked: no ISIN of the twins is revealed in the calculator.
     expect(await textOf(page.getByTestId("calc"))).not.toContain("IE000XZSV718");
@@ -118,7 +118,7 @@ test.describe("fee calculator (plan §6)", () => {
     expect(twinless.length).toBeGreaterThanOrEqual(2);
     await selectTicker(page.getByTestId("calc-etf-a"), twinless[0]);
     await selectTicker(page.getByTestId("calc-etf-b"), twinless[1]);
-    await expect.poll(async () => textOf(unlock)).toContain("Pro tento index nemáme v přehledu evropský protějšek.");
+    await expect.poll(async () => textOf(unlock)).toContain("Pro tento index nemáme v přehledu evropskou alternativu.");
     await expect(page.getByTestId("calc-unlock-cta")).toHaveCount(0);
   });
 
@@ -128,9 +128,48 @@ test.describe("fee calculator (plan §6)", () => {
     expect(await page.evaluate(() => document.activeElement?.getAttribute("data-testid"))).not.toBe("lead-email");
   });
 
-  test("footnote states the formula and no-return assumption", async ({ page }) => {
+  test("footnote explains TER-only cost; FAQ 4 holds the formula", async ({ page }) => {
     expect(await textOf(page.getByTestId("calc"))).toContain(
-      "Výpočet: poplatek = částka × (1 − (1 − TER)^roky). Bez zhodnocení, poplatků brokera, daní a kurzových rozdílů. Ilustrace nákladů, ne předpověď výnosu.",
+      "Počítáme jen poplatek fondu (TER): každý rok si fond strhne TER z hodnoty investice. Zhodnocení, poplatky brokera, daně ani kurzové rozdíly nepočítáme. Ilustrace nákladů, ne předpověď výnosu.",
     );
+    expect(norm(await page.getByTestId("faq").textContent())).toContain(
+      "Kalkulačka počítá poplatek za n let jako částka × (1 − (1 − TER)ⁿ), bez zhodnocení.",
+    );
+  });
+});
+
+test.describe("unlocked calculator row (plan §6.1, §6.2 UCITS fixtures)", () => {
+  test.beforeEach(async ({ page }) => {
+    await page.addInitScript(() => localStorage.setItem("lp_unlocked", "1"));
+    await page.goto("/");
+    await page.getByTestId("consent-reject").click();
+  });
+
+  async function expectUcits(page: Page, spyl: string, cspx: string, years: number, diff: string) {
+    const unlock = page.getByTestId("calc-unlock");
+    await expect.poll(async () => textOf(page.getByTestId("calc-ucits-fee-IE000XZSV718"))).toBe(`SPYL · ${terText(0.03)} · ${spyl}`);
+    expect(await textOf(page.getByTestId("calc-ucits-fee-IE00B5BMR087"))).toBe(`CSPX · ${terText(0.07)} · ${cspx}`);
+    expect(await textOf(page.getByTestId("calc-ucits-diff"))).toBe(`Rozdíl mezi nimi za ${years} let: ${diff}`);
+    expect(await textOf(unlock)).toContain("Evropské alternativy pro stejnou částku a dobu:");
+    expect(await textOf(unlock)).not.toContain("podobný index");
+    expect(await textOf(unlock)).not.toContain("🔒");
+    await expect(page.getByTestId("calc-unlock-cta")).toHaveCount(0);
+  }
+
+  test("defaults, then the other two fixtures, recomputed live", async ({ page }) => {
+    await expectUcits(page, "2 991 Kč", "6 954 Kč", 20, "3 962 Kč");
+
+    await page.getByTestId("calc-amount-chip-100000").click();
+    await page.getByTestId("calc-years-chip-10").click();
+    await selectTicker(page.getByTestId("calc-etf-b"), "VOO");
+    await expect.poll(async () => textOf(page.getByTestId("calc-ucits-diff"))).toBe("Rozdíl mezi nimi za 10 let: 398 Kč");
+    await expectUcits(page, "300 Kč", "698 Kč", 10, "398 Kč");
+
+    await page.getByTestId("calc-amount-chip-1000000").click();
+    await page.getByTestId("calc-years-chip-30").click();
+    await selectTicker(page.getByTestId("calc-etf-a"), "IVV");
+    await selectTicker(page.getByTestId("calc-etf-b"), "SPYM");
+    await expect.poll(async () => textOf(page.getByTestId("calc-ucits-diff"))).toBe("Rozdíl mezi nimi za 30 let: 11 827 Kč");
+    await expectUcits(page, "8 961 Kč", "20 788 Kč", 30, "11 827 Kč");
   });
 });

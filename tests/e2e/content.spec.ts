@@ -40,10 +40,37 @@ test("every ETF row shows TER date or the prospectus fallback, plus as-of date",
     const t = await textOf(page.getByTestId(`etf-row-${e.ticker}`).filter({ visible: true }).first());
     expect(t, e.ticker).toMatch(dataK(e.as_of_date));
     if (e.ter_as_of) {
-      expect(t, e.ticker).toMatch(new RegExp(`TER k (${e.ter_as_of}|${czDate(e.ter_as_of).replace(/\./g, "\\.")})`));
+      expect(t, e.ticker).toMatch(new RegExp(`TER \\(stav k (${e.ter_as_of}|${czDate(e.ter_as_of).replace(/\./g, "\\.")})\\)`));
     } else {
-      expect(t, e.ticker).toContain(`TER dle prospektu, staženo`);
+      expect(t, e.ticker).toContain(`TER podle prospektu (staženo`);
     }
+    if (e.aum_usd !== null) expect(t, e.ticker).toContain("mld. USD");
+    expect(t, e.ticker).not.toMatch(/\bbil\./);
+  }
+});
+
+test("fund size: VOO shows 1 000 mld. USD (max. 1 decimal)", async ({ page }) => {
+  const t = await textOf(page.getByTestId("etf-row-VOO").filter({ visible: true }).first());
+  expect(t).toContain("1 000 mld. USD");
+  for (const e of ds.etfs) {
+    if (e.aum_usd === null) continue;
+    const row = await textOf(page.getByTestId(`etf-row-${e.ticker}`).filter({ visible: true }).first());
+    const expected = `${new Intl.NumberFormat("cs-CZ", { maximumFractionDigits: 1 }).format(e.aum_usd / 1e9).replace(/[\u00a0\u202f]/g, " ")} mld. USD`;
+    expect(row, e.ticker).toContain(expected);
+  }
+});
+
+test("rows with evidence_urls carry an etf-evidence link to the JSON source", async ({ page }) => {
+  const withEvidence = ds.etfs.filter((e) => e.evidence_urls.length > 0);
+  expect(withEvidence.map((e) => e.ticker)).toContain("VOO");
+  for (const e of withEvidence) {
+    const link = page.getByTestId(`etf-evidence-${e.ticker}`).filter({ visible: true }).first();
+    await expect(link, e.ticker).toHaveAttribute("href", e.evidence_urls[0]);
+    expect(await textOf(link)).toBe("zdrojová data (JSON)");
+    expect((await link.getAttribute("rel")) ?? "").toContain("noopener");
+  }
+  for (const e of ds.etfs.filter((x) => x.evidence_urls.length === 0)) {
+    await expect(page.getByTestId(`etf-evidence-${e.ticker}`), e.ticker).toHaveCount(0);
   }
 });
 
@@ -104,7 +131,25 @@ test("privacy-link goes to /soukromi and the notice renders", async ({ page }) =
   await expect(page).toHaveURL(/\/soukromi$/);
   const t = await textOf(page.locator("body"));
   // §5.8 lists section topics (not verbatim copy): the complaint authority is identified by its site.
-  for (const s of ["Správce", "e-mail", "čl. 6 odst. 1 písm. a) GDPR", "Upstash", "Umami", "24 měsíců", "uoou.gov.cz", "lp_analytics_consent", "lp_unlocked"]) {
+  for (const s of [
+    "Správce",
+    "e-mail",
+    "čl. 6 odst. 1 písm. a) GDPR",
+    "čl. 6 odst. 1 písm. f) GDPR",
+    "Upstash",
+    "Umami",
+    "24 měsíců",
+    "6 měsících",
+    "omezení zpracování",
+    "námitku",
+    "Předávání mimo EU",
+    "Data Privacy Framework",
+    "standardní smluvní doložky",
+    "uoou.gov.cz",
+    "lp_analytics_consent",
+    "lp_unlocked",
+    "že jste přehled evropských alternativ už odemkli",
+  ]) {
     expect(t, s).toContain(s);
   }
 });

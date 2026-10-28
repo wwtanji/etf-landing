@@ -11,7 +11,7 @@ export function uniqueEmail(prefix = "lead"): string {
   return `${prefix}.${randomUUID().slice(0, 8)}@example.cz`;
 }
 
-export const CONSENT_VERSION = "cz-2026-10-28-v1";
+export const CONSENT_VERSION = "cz-2026-10-28-v2";
 
 export function validBody(overrides: Record<string, unknown> = {}): Record<string, unknown> {
   return {

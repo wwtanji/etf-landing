@@ -74,14 +74,15 @@ export const UcitsEtfSchema = z.strictObject({
   retrieved_at: IsoDate,
   source_url: HttpsUrl,
   evidence_urls: z.array(HttpsUrl),
-  // §7.2 lists ter/aum/isin (+ optional registration); extra quote keys are additional
-  // evidence, accepted as long as they are non-empty strings.
+  // §7.2 lists ter/aum/isin plus optional known keys registration/index (r1); extra quote keys
+  // are additional evidence, accepted as non-empty strings and must be preserved.
   quotes: z
     .object({
       ter: NonEmpty,
       aum: NonEmpty,
       isin: NonEmpty,
       registration: NonEmpty.optional(),
+      index: NonEmpty.optional(),
     })
     .catchall(NonEmpty),
   us_counterparts: z.array(z.string().regex(/^[A-Z]{1,5}$/)).min(1),

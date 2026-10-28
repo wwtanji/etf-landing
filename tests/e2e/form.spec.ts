@@ -4,7 +4,7 @@ import { expect, norm, test, textOf, type Page } from "./fixtures";
 
 const ds = loadDataset();
 const email = () => `e2e.${randomUUID().slice(0, 8)}@example.cz`;
-const CONSENT_VERSION = "cz-2026-10-28-v1";
+const CONSENT_VERSION = "cz-2026-10-28-v2";
 
 async function openForm(page: Page, path = "/") {
   await page.goto(path);
@@ -28,7 +28,7 @@ test.describe("lead form (plan §5.4)", () => {
     await expect(consent).not.toBeChecked();
     const consentText = await textOf(form);
     expect(consentText).toContain(
-      "Souhlasím se zasíláním e-mailů o poplatcích ETF a novinkách (nejvýše 1× měsíčně) a se zpracováním e-mailu podle zásad ochrany osobních údajů. Souhlas můžu kdykoli odvolat.",
+      "Souhlasím se zasíláním e-mailů o poplatcích ETF a novinkách (nejvýše 1× měsíčně) a se zpracováním e-mailu podle zásad ochrany osobních údajů. Souhlas mohu kdykoli odvolat.",
     );
     await expect(form.locator('a[href="/soukromi"]')).toHaveCount(1);
 
@@ -105,12 +105,16 @@ test.describe("lead form (plan §5.4)", () => {
     const ty = page.getByTestId("thank-you");
     await expect(ty).toBeVisible();
     await expect(page.getByTestId("lead-form")).toHaveCount(0);
-    expect(await textOf(ty)).toContain("Hotovo. Tady jsou evropské protějšky.");
+    expect(await textOf(ty)).toContain("Hotovo. Tady jsou evropské alternativy.");
     // Focus moves to the thank-you heading (§13).
     await expect
       .poll(() => page.evaluate(() => (document.activeElement?.textContent ?? "").replace(/\s+/g, " ")), { message: "focus on heading" })
-      .toContain("Hotovo. Tady jsou evropské protějšky.");
-    expect(await textOf(ty)).toContain("Porovnávali jste SPY a SPYM");
+      .toContain("Hotovo. Tady jsou evropské alternativy.");
+    expect(await textOf(ty)).toContain("Porovnávali jste SPY a SPYM (index S&P 500).");
+    expect(await textOf(page.getByTestId("thank-you-intro"))).toContain("(index S&P 500)");
+    expect(await textOf(page.getByTestId("thank-you-fees"))).toBe(
+      "Poplatek fondu za 20 let při 500 000 Kč: SPYL 2 991 Kč, CSPX 6 954 Kč (rozdíl 3 962 Kč).",
+    );
     await expect(ty).toBeInViewport();
 
     // Twins of SPY/SPYM first, TER ascending (SPYL 0.03 before CSPX 0.07), then the rest.
@@ -139,7 +143,10 @@ test.describe("lead form (plan §5.4)", () => {
 
     // Calculator's locked row turns into the unlocked list.
     const unlock = page.getByTestId("calc-unlock");
-    await expect.poll(async () => textOf(unlock)).toContain("SPYL");
+    await expect.poll(async () => textOf(page.getByTestId("calc-ucits-fee-IE000XZSV718"))).toContain("2 991 Kč");
+    expect(await textOf(page.getByTestId("calc-ucits-fee-IE00B5BMR087"))).toContain("6 954 Kč");
+    expect(await textOf(page.getByTestId("calc-ucits-diff"))).toContain("3 962 Kč");
+    expect(await textOf(unlock)).toContain("SPYL");
     expect(await textOf(unlock)).toContain("CSPX");
     await expect(page.getByTestId("calc-unlock-cta")).toHaveCount(0);
 

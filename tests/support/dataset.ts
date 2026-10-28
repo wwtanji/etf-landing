@@ -19,6 +19,8 @@ export type RawEtf = {
   ter_as_of: string | null;
   as_of_date: string;
   source_url: string;
+  evidence_urls: string[];
+  aum_usd: number | null;
   ucits_twin_ids: string[];
 };
 export type RawUcits = { isin: string; ticker: string; ter_pct: number; source_url: string; us_counterparts: string[] };

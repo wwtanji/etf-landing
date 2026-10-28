@@ -15,9 +15,9 @@ const VARIANTS = [
   },
   {
     path: "/b",
-    h1: "Proč u brokera nenajdete VOO – a co sleduje stejný index",
-    sub: "Americká ETF nemají dokument KID, který EU vyžaduje pro drobné investory. Porovnejte jejich poplatky a odemkněte evropské protějšky se stejným indexem.",
-    cta: "Porovnat ETF",
+    h1: "Proč u brokera nenajdete VOO – a která ETF sledují stejný index",
+    sub: "Americká ETF zpravidla nemají dokument KID, který EU vyžaduje pro drobné investory. Porovnejte jejich poplatky a odemkněte evropské alternativy se stejným indexem.",
+    cta: "Ukázat evropská ETF",
   },
 ] as const;
 
@@ -60,18 +60,42 @@ for (const v of VARIANTS) {
       expect(b.height).toBeLessThanOrEqual(88);
       const overlap = !(c.y + c.height <= b.y || b.y + b.height <= c.y || c.x + c.width <= b.x || b.x + b.width <= c.x);
       expect(overlap, "consent bar overlaps hero-cta").toBe(false);
-      // Non-modal: the CTA is still clickable and scrolls to the calculator (§5.1).
+      // Non-modal: the CTA is still clickable and scrolls to its target (§5.1).
       await page.getByTestId("hero-cta").click();
-      await expect(page.getByTestId("calc")).toBeInViewport();
+      await expect(page.getByTestId(v.path === "/" ? "calc" : "priips-note")).toBeInViewport();
     });
   });
 }
 
-test("hero CTA scrolls to the calculator without focusing the email field", async ({ page }) => {
+test("hero CTA on / scrolls so calc-diff is fully visible and not under sticky-cta", async ({ page }) => {
   await page.goto("/");
+  await page.getByTestId("consent-reject").click();
+  await expect(page.getByTestId("consent-bar")).toBeHidden();
   await page.getByTestId("hero-cta").click();
-  await expect(page.getByTestId("calc")).toBeInViewport();
+  const diff = page.getByTestId("calc-diff");
+  await expect(diff).toBeInViewport({ ratio: 1 });
+  // Let smooth scrolling settle, then check the sticky CTA does not cover it.
+  await page.waitForTimeout(800);
+  await expect(diff).toBeInViewport({ ratio: 1 });
+  const sticky = page.getByTestId("sticky-cta");
+  if (await sticky.isVisible()) {
+    const s = await sticky.boundingBox();
+    const d = await diff.boundingBox();
+    expect(s && d).toBeTruthy();
+    if (s && d) expect(d.y + d.height <= s.y || s.y + s.height <= d.y, "sticky-cta overlaps calc-diff").toBe(true);
+  }
   expect(await page.evaluate(() => document.activeElement?.getAttribute("data-testid"))).not.toBe("lead-email");
+});
+
+test("hero CTA on /b scrolls to priips-note, not the calculator", async ({ page }) => {
+  await page.goto("/b");
+  await page.getByTestId("consent-reject").click();
+  await page.getByTestId("hero-cta").click();
+  await expect(page.getByTestId("priips-note")).toBeInViewport();
+  await page.waitForTimeout(800);
+  const top = await page.getByTestId("priips-note").evaluate((el) => el.getBoundingClientRect().top);
+  expect(Math.abs(top), "priips-note top near viewport top").toBeLessThan(200);
+  await expect(page.getByTestId("calc-diff")).not.toBeInViewport();
 });
 
 test("section order matches plan §5", async ({ page }) => {

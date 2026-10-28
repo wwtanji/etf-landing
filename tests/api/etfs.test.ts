@@ -1,13 +1,20 @@
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import { EtfDatasetTestSchema } from "../support/etf-schema";
 import { loadRawDataset } from "../support/dataset";
 
 describe("GET /api/etfs (plan §8.3)", () => {
-  it("exports runtime, preferredRegion and dynamic", async () => {
+  it("exports runtime and dynamic, and no preferredRegion (region comes from web/vercel.json)", async () => {
     const route = await import("@/app/api/etfs/route");
     expect(route.runtime).toBe("nodejs");
-    expect(route.preferredRegion).toBe("fra1");
+    expect(route).not.toHaveProperty("preferredRegion");
     expect(route.dynamic).toBe("force-static");
+  });
+
+  it("web/vercel.json pins functions to fra1 (plan §10)", () => {
+    const cfg = JSON.parse(readFileSync(resolve(__dirname, "../../web/vercel.json"), "utf8")) as { regions?: unknown };
+    expect(cfg.regions).toEqual(["fra1"]);
   });
 
   it("returns 200, the cache header, and a body that passes the tests' own schema", async () => {
@@ -38,5 +45,17 @@ describe("getEtfDataset / EtfDatasetSchema (plan §8.1)", () => {
     const bad = structuredClone(raw);
     bad.etfs[0].exchange = "Nasdaq";
     expect(EtfDatasetSchema.safeParse(bad).success).toBe(false);
+  });
+
+  it("the api's EtfDatasetSchema keeps optional and extra ucits quote keys (§7.2 r1)", async () => {
+    const { EtfDatasetSchema } = await import("@/lib/server/etf-schema");
+    const raw = structuredClone(loadRawDataset()) as { ucits: { quotes: Record<string, string> }[] };
+    Object.assign(raw.ucits[0].quotes, { index: "S&P 500", registration: "Czech Republic", extra_note: "kept" });
+    const res = EtfDatasetSchema.safeParse(raw);
+    expect(res.success).toBe(true);
+    expect((res.data as typeof raw).ucits[0].quotes).toMatchObject({ index: "S&P 500", registration: "Czech Republic", extra_note: "kept" });
+    delete raw.ucits[0].quotes.index;
+    delete raw.ucits[0].quotes.registration;
+    expect(EtfDatasetSchema.safeParse(raw).success).toBe(true);
   });
 });

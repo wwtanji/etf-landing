@@ -55,9 +55,9 @@ function expectNoStore(res: Response) {
 }
 
 describe("route module exports (plan §8.1)", () => {
-  it("exports runtime, preferredRegion and dynamic", () => {
+  it("exports runtime and dynamic, and no preferredRegion (region comes from web/vercel.json)", () => {
     expect(route.runtime).toBe("nodejs");
-    expect(route.preferredRegion).toBe("fra1");
+    expect(route).not.toHaveProperty("preferredRegion");
     expect(route.dynamic).toBe("force-dynamic");
     expect(typeof route.POST).toBe("function");
   });
@@ -69,6 +69,7 @@ describe("route module exports (plan §8.1)", () => {
     expect(cfg.RATE_LIMIT_WINDOW_SECONDS).toBe(600);
     expect(cfg.MAX_BODY_BYTES).toBe(4096);
     expect(cfg.HONEYPOT_FIELD).toBe("website");
+    expect(cfg.LEAD_TTL_SECONDS).toBe(63072000);
   });
 });
 
@@ -218,8 +219,8 @@ describe("POST /api/leads – validation (422)", () => {
     await expect422(body, "consent", "consent_required");
   });
 
-  it("wrong consent_version → 422 invalid_consent_version", async () => {
-    await expect422(validBody({ consent_version: "cz-2026-01-01-v0" }), "consent_version", "invalid_consent_version");
+  it.each(["cz-2026-01-01-v0", "cz-2026-10-28-v1"])("consent_version %s → 422 invalid_consent_version", async (v) => {
+    await expect422(validBody({ consent_version: v }), "consent_version", "invalid_consent_version");
   });
 
   it("bad variant → 422 invalid_variant", async () => {

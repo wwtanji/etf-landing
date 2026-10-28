@@ -129,7 +129,7 @@ test.describe("event contract (plan §9.4)", () => {
     // CTA: calc_unlock, priips, sticky
     await page.getByTestId("calc-unlock-cta").click();
     await expect(page.getByTestId("lead-form")).toBeInViewport();
-    const priipsCta = page.getByTestId("priips-note").getByText("Odemknout evropské protějšky", { exact: true });
+    const priipsCta = page.getByTestId("priips-note").getByText("Odemknout evropské alternativy", { exact: true });
     await priipsCta.scrollIntoViewIfNeeded();
     await priipsCta.click();
     await page.getByTestId("faq").scrollIntoViewIfNeeded();
@@ -156,11 +156,15 @@ test.describe("event contract (plan §9.4)", () => {
 
     const events = (await lpEvents(page)) ?? [];
     const names = new Set(events.map((e) => e.name));
-    for (const n of ["lp_view", "scroll_depth", "section_view", "calc_interact", "calc_result", "cta_click", "form_start", "form_submit", "lead_success"]) {
+    for (const n of ["lp_view", "scroll_depth", "section_view", "value_view", "form_view", "calc_interact", "calc_result", "cta_click", "form_start", "form_submit", "lead_success"]) {
       expect(names, n).toContain(n);
     }
     // Once-only events.
     expect(named(events, "lp_view")).toHaveLength(1);
+    expect(named(events, "value_view")).toHaveLength(1);
+    expect(named(events, "form_view")).toHaveLength(1);
+    // The calculator result comes before the PRIIPs block on /, and the hero CTA scrolls to the calculator.
+    expect(named(events, "value_view")[0].props?.source).toBe("calc");
     expect(named(events, "form_start")).toHaveLength(1);
     expect(named(events, "lead_success")).toHaveLength(1);
     for (const d of [25, 50, 75, 100]) expect(named(events, "scroll_depth").filter((e) => e.props?.depth === d), `depth ${d}`).toHaveLength(1);
@@ -174,6 +178,9 @@ test.describe("event contract (plan §9.4)", () => {
     const idx = (n: string) => events.findIndex((e) => e.name === n);
     expect(idx("form_start")).toBeLessThan(idx("form_submit"));
     expect(idx("form_submit")).toBeLessThan(idx("lead_success"));
+    // Funnel order: value_view < form_view < form_start (§9.4).
+    expect(idx("value_view")).toBeLessThan(idx("form_view"));
+    expect(idx("form_view")).toBeLessThan(idx("form_start"));
     // Event names within Umami's 50-char limit.
     for (const n of names) expect(n.length).toBeLessThanOrEqual(50);
 
@@ -208,6 +215,36 @@ test.describe("event contract (plan §9.4)", () => {
         expect(e.props ?? {}, `${e.name}.${k}`).not.toHaveProperty(k);
       }
     }
+  });
+
+  test("/b funnel without touching the calculator: value_view(priips) → form_view → form_start → form_submit → lead_success", async ({ page }) => {
+    await page.goto("/b");
+    await acceptConsent(page);
+    await waitForEvent(page, "lp_view");
+    await page.getByTestId("hero-cta").click();
+    await expect(page.getByTestId("priips-note")).toBeInViewport();
+    await waitForEvent(page, "value_view", (p) => p.source === "priips");
+    const addr = email();
+    await page.getByTestId("lead-form").scrollIntoViewIfNeeded();
+    // IntersectionObserver reports asynchronously; a real visitor sees the form before typing.
+    await waitForEvent(page, "form_view");
+    await page.getByTestId("lead-email").focus();
+    await page.getByTestId("lead-email").fill(addr);
+    await page.getByTestId("lead-consent").check();
+    await page.getByTestId("lead-submit").click();
+    await expect(page.getByTestId("thank-you")).toBeVisible();
+    await waitForEvent(page, "lead_success");
+    await page.waitForTimeout(1500); // longer than the 1000 ms calc_result debounce
+
+    const events = (await lpEvents(page)) ?? [];
+    const funnel = ["value_view", "form_view", "form_start", "form_submit", "lead_success"];
+    for (const n of funnel) expect(named(events, n), n).toHaveLength(1);
+    expect(named(events, "value_view")[0].props?.source).toBe("priips");
+    const idx = funnel.map((n) => events.findIndex((e) => e.name === n));
+    expect(idx).toEqual([...idx].sort((a, b) => a - b));
+    expect(named(events, "calc_result")).toHaveLength(0);
+    expect(named(events, "calc_interact")).toHaveLength(0);
+    for (const e of events) expect(e.props?.variant, e.name).toBe("b");
   });
 
   test("form_error fires on every failed attempt with the right reason", async ({ page }) => {
@@ -250,7 +287,7 @@ test.describe("event contract (plan §9.4)", () => {
     expect(await eventNames(page)).not.toContain("lead_success");
   });
 
-  test("source_click fires on every ETF-table source link click with the ticker", async ({ page }) => {
+  test("source_click fires on every ETF-table source link click with the ticker and link kind", async ({ page }) => {
     await blockExternalNavigation(page);
     await page.goto("/");
     await acceptConsent(page);
@@ -258,9 +295,13 @@ test.describe("event contract (plan §9.4)", () => {
     await link.scrollIntoViewIfNeeded();
     await link.click();
     await link.click();
-    await expect
-      .poll(async () => named((await lpEvents(page)) ?? [], "source_click").map((e) => e.props?.ticker))
-      .toEqual(["SPY", "SPY"]);
+    const clicks = async () => named((await lpEvents(page)) ?? [], "source_click").map((e) => `${e.props?.ticker}:${e.props?.link}`);
+    await expect.poll(clicks).toEqual(["SPY:page", "SPY:page"]);
+    // Vanguard rows carry a second "zdrojová data (JSON)" link (§5.5) → link: "data".
+    const evidence = page.getByTestId("etf-evidence-VOO").filter({ visible: true }).first();
+    await evidence.scrollIntoViewIfNeeded();
+    await evidence.click();
+    await expect.poll(clicks).toEqual(["SPY:page", "SPY:page", "VOO:data"]);
   });
 
   test("value_interact: copy ISIN (clipboard + toast) and open UCITS source", async ({ page, context, baseURL }) => {
@@ -309,7 +350,13 @@ test.describe("sticky CTA (plan §3)", () => {
     await expect(sticky).toBeHidden();
     await page.getByTestId("faq").scrollIntoViewIfNeeded();
     await expect(sticky).toBeVisible();
-    expect(await textOf(sticky)).not.toBe("");
+    expect(await textOf(sticky)).toBe("Odemknout evropské alternativy");
+    // Hidden while calc-unlock-cta is in the viewport (§3, r1).
+    await page.getByTestId("calc-unlock-cta").evaluate((el) => el.scrollIntoView({ block: "center" }));
+    await expect(page.getByTestId("calc-unlock-cta")).toBeInViewport();
+    await expect(sticky).toBeHidden();
+    await page.getByTestId("faq").scrollIntoViewIfNeeded();
+    await expect(sticky).toBeVisible();
     await page.getByTestId("lead-form").scrollIntoViewIfNeeded();
     await expect(sticky).toBeHidden();
     await submitValidLead(page);

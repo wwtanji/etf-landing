@@ -27,6 +27,28 @@ describe("data/etfs.json – schema (plan §7.2)", () => {
     expect(mutate((d) => void ((d as { schema_version: number }).schema_version = 2))).toBe(false);
   });
 
+  it("ucits quotes: index and registration are optional known keys; extra keys are preserved (§7.2 r1)", () => {
+    const parse = (fn: (q: Record<string, unknown>) => void) => {
+      const copy = structuredClone(raw) as TestDataset;
+      fn(copy.ucits[0].quotes as Record<string, unknown>);
+      return EtfDatasetTestSchema.safeParse(copy);
+    };
+    const without = parse((q) => {
+      delete q.index;
+      delete q.registration;
+    });
+    expect(without.success).toBe(true);
+    const withKeys = parse((q) => {
+      q.index = "S&P 500";
+      q.registration = "Czech Republic";
+      q.extra_note = "kept";
+    });
+    expect(withKeys.success).toBe(true);
+    expect(withKeys.data?.ucits[0].quotes).toMatchObject({ index: "S&P 500", registration: "Czech Republic", extra_note: "kept" });
+    expect(parse((q) => void (q.index = "")).success).toBe(false);
+    expect(parse((q) => void (q.registration = " ")).success).toBe(false);
+  });
+
   it("has 11 US ETF rows and 5 UCITS rows", () => {
     expect(ds.etfs).toHaveLength(11);
     expect(ds.ucits).toHaveLength(5);
