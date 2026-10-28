@@ -1,0 +1,506 @@
+{
+  "schema_version": 1,
+  "retrieved_at": "2026-10-28",
+  "retrieved_by": "architect agent (stage 1), parsed from issuer pages listed per row",
+  "quote_convention": "Quotes are verbatim excerpts of the source text after HTML-to-text whitespace collapsing; ' … ' marks omitted text. Vanguard quotes are verbatim JSON from the endpoints in evidence_urls, which feed the human page in source_url.",
+  "etfs": [
+    {
+      "ticker": "SPY",
+      "name": "State Street SPDR S&P 500 ETF Trust",
+      "issuer": "State Street Global Advisors",
+      "exchange": "NYSE Arca",
+      "domicile": "US",
+      "index": "S&P 500 Index",
+      "group": "sp500",
+      "currency": "USD",
+      "ter_pct": 0.0945,
+      "ter_as_of": "2026-10-28",
+      "aum_usd": 814816360000,
+      "aum_scope": "fund",
+      "aum_as_of": "2026-10-27",
+      "as_of_date": "2026-10-27",
+      "retrieved_at": "2026-10-28",
+      "source_url": "https://www.ssga.com/us/en/intermediary/etfs/state-street-spdr-sp-500-etf-trust-spy",
+      "quotes": {
+        "ter": "Fund Information as of Oct 28 2026 … Gross Expense Ratio … It can be found in the fund's most recent prospectus. 0.0945% Base Currency USD",
+        "aum": "Assets Under Management $814,816.36 M as of Oct 27 2026",
+        "exchange": "Listing Information as of Oct 28 2026 Exchange Listing Date Trading Currency Ticker CUSIP ISIN NYSE ARCA",
+        "index": "Fund Information as of Oct 28 2026 Benchmark S&P 500 Index"
+      },
+      "ucits_twin_ids": [
+        "IE000XZSV718",
+        "IE00B5BMR087"
+      ],
+      "evidence_urls": []
+    },
+    {
+      "ticker": "IVV",
+      "name": "iShares Core S&P 500 ETF",
+      "issuer": "BlackRock iShares",
+      "exchange": "NYSE Arca",
+      "domicile": "US",
+      "index": "S&P 500 Index",
+      "group": "sp500",
+      "currency": "USD",
+      "ter_pct": 0.03,
+      "ter_as_of": null,
+      "aum_usd": 885141071461,
+      "aum_scope": "fund",
+      "aum_as_of": "2026-10-27",
+      "as_of_date": "2026-10-27",
+      "retrieved_at": "2026-10-28",
+      "source_url": "https://www.ishares.com/us/products/239726/ishares-core-s-p-500-etf",
+      "quotes": {
+        "ter": "Expense Ratio: Fees as stated in the prospectus 0.03%",
+        "aum": "Net Assets of Fund $885,141,071,461 as of Oct 27, 2026",
+        "exchange": "Exchange NYSE Arca",
+        "index": "Benchmark Index S&P 500 Index"
+      },
+      "ucits_twin_ids": [
+        "IE000XZSV718",
+        "IE00B5BMR087"
+      ],
+      "evidence_urls": []
+    },
+    {
+      "ticker": "VOO",
+      "name": "Vanguard S&P 500 ETF",
+      "issuer": "Vanguard",
+      "exchange": "NYSE Arca",
+      "domicile": "US",
+      "index": "S&P 500 Index",
+      "group": "sp500",
+      "currency": "USD",
+      "ter_pct": 0.03,
+      "ter_as_of": "2026-04-28",
+      "aum_usd": 1000000000000,
+      "aum_scope": "etf_share_class",
+      "aum_as_of": "2026-09-30",
+      "as_of_date": "2026-09-30",
+      "retrieved_at": "2026-10-28",
+      "source_url": "https://investor.vanguard.com/investment-products/etfs/profile/voo",
+      "quotes": {
+        "ter": "\"expenseRatio\":\"0.0300\",\"expenseRatioAsOfDate\":\"2026-04-28T00:00:00-04:00\"",
+        "aum": "\"shareClassTotalNetAssets\":\"$1.0 trillion\",\"shareClassTotalNetAssetsDate\":\"2026-09-30T00:00:00-04:00\"",
+        "exchange": "The fund’s ETF Shares are listed for trading on NYSE Arca",
+        "index": "\"benchmarkShortName\":\"S&P 500 Index\""
+      },
+      "ucits_twin_ids": [
+        "IE000XZSV718",
+        "IE00B5BMR087"
+      ],
+      "evidence_urls": [
+        "https://investor.vanguard.com/vmf/api/VOO/profile",
+        "https://investor.vanguard.com/vmf/api/VOO/characteristic"
+      ]
+    },
+    {
+      "ticker": "SPYM",
+      "name": "State Street SPDR Portfolio S&P 500 ETF",
+      "issuer": "State Street Global Advisors",
+      "exchange": "NYSE Arca",
+      "domicile": "US",
+      "index": "S&P 500 Index",
+      "group": "sp500",
+      "currency": "USD",
+      "ter_pct": 0.02,
+      "ter_as_of": "2026-10-28",
+      "aum_usd": 185006720000,
+      "aum_scope": "fund",
+      "aum_as_of": "2026-10-27",
+      "as_of_date": "2026-10-27",
+      "retrieved_at": "2026-10-28",
+      "source_url": "https://www.ssga.com/us/en/intermediary/etfs/state-street-spdr-portfolio-sp-500-etf-spym",
+      "quotes": {
+        "ter": "Fund Information as of Oct 28 2026 … Gross Expense Ratio … It can be found in the fund's most recent prospectus. 0.02% Base Currency USD",
+        "aum": "Assets Under Management $185,006.72 M as of Oct 27 2026",
+        "exchange": "Listing Information as of Oct 28 2026 Exchange Listing Date Trading Currency Ticker CUSIP ISIN NYSE ARCA",
+        "index": "Fund Information as of Oct 28 2026 Benchmark S&P 500 Index"
+      },
+      "ucits_twin_ids": [
+        "IE000XZSV718",
+        "IE00B5BMR087"
+      ],
+      "evidence_urls": []
+    },
+    {
+      "ticker": "VTI",
+      "name": "Vanguard Morningstar Total Stock Market ETF",
+      "issuer": "Vanguard",
+      "exchange": "NYSE Arca",
+      "domicile": "US",
+      "index": "Morningstar US Total Market Index",
+      "group": "us_total",
+      "currency": "USD",
+      "ter_pct": 0.03,
+      "ter_as_of": "2026-04-28",
+      "aum_usd": 689200000000,
+      "aum_scope": "etf_share_class",
+      "aum_as_of": "2026-09-30",
+      "as_of_date": "2026-09-30",
+      "retrieved_at": "2026-10-28",
+      "source_url": "https://investor.vanguard.com/investment-products/etfs/profile/vti",
+      "quotes": {
+        "ter": "\"expenseRatio\":\"0.0300\",\"expenseRatioAsOfDate\":\"2026-04-28T00:00:00-04:00\"",
+        "aum": "\"shareClassTotalNetAssets\":\"$689.2 billion\",\"shareClassTotalNetAssetsDate\":\"2026-09-30T00:00:00-04:00\"",
+        "exchange": "The fund’s ETF Shares are listed for trading on NYSE Arca",
+        "index": "\"benchmarkShortName\":\"Morningstar US Total Market Index\""
+      },
+      "ucits_twin_ids": [],
+      "evidence_urls": [
+        "https://investor.vanguard.com/vmf/api/VTI/profile",
+        "https://investor.vanguard.com/vmf/api/VTI/characteristic"
+      ]
+    },
+    {
+      "ticker": "ITOT",
+      "name": "iShares Core S&P Total U.S. Stock Market ETF",
+      "issuer": "BlackRock iShares",
+      "exchange": "NYSE Arca",
+      "domicile": "US",
+      "index": "S&P Total Market Index (TMI)",
+      "group": "us_total",
+      "currency": "USD",
+      "ter_pct": 0.03,
+      "ter_as_of": null,
+      "aum_usd": 97067184836,
+      "aum_scope": "fund",
+      "aum_as_of": "2026-10-27",
+      "as_of_date": "2026-10-27",
+      "retrieved_at": "2026-10-28",
+      "source_url": "https://www.ishares.com/us/products/239724/ishares-core-s-p-total-u-s-stock-market-etf",
+      "quotes": {
+        "ter": "Expense Ratio: Fees as stated in the prospectus 0.03%",
+        "aum": "Net Assets of Fund $97,067,184,836 as of Oct 27, 2026",
+        "exchange": "Exchange NYSE Arca",
+        "index": "Benchmark Index S&P Total Market Index (TMI)"
+      },
+      "ucits_twin_ids": [],
+      "evidence_urls": []
+    },
+    {
+      "ticker": "VT",
+      "name": "Vanguard Total World Stock ETF",
+      "issuer": "Vanguard",
+      "exchange": "NYSE Arca",
+      "domicile": "US",
+      "index": "FTSE Global All Cap Index",
+      "group": "world",
+      "currency": "USD",
+      "ter_pct": 0.06,
+      "ter_as_of": "2026-02-27",
+      "aum_usd": 81800000000,
+      "aum_scope": "etf_share_class",
+      "aum_as_of": "2026-09-30",
+      "as_of_date": "2026-09-30",
+      "retrieved_at": "2026-10-28",
+      "source_url": "https://investor.vanguard.com/investment-products/etfs/profile/vt",
+      "quotes": {
+        "ter": "\"expenseRatio\":\"0.0600\",\"expenseRatioAsOfDate\":\"2026-02-27T00:00:00-05:00\"",
+        "aum": "\"shareClassTotalNetAssets\":\"$81.8 billion\",\"shareClassTotalNetAssetsDate\":\"2026-09-30T00:00:00-04:00\"",
+        "exchange": "The fund’s ETF Shares are listed for trading on NYSE Arca",
+        "index": "\"benchmarkShortName\":\"FTSE Global All Cap Index\""
+      },
+      "ucits_twin_ids": [
+        "IE00B3YLTY66"
+      ],
+      "evidence_urls": [
+        "https://investor.vanguard.com/vmf/api/VT/profile",
+        "https://investor.vanguard.com/vmf/api/VT/characteristic"
+      ]
+    },
+    {
+      "ticker": "VEA",
+      "name": "Vanguard FTSE Developed Markets ETF",
+      "issuer": "Vanguard",
+      "exchange": "NYSE Arca",
+      "domicile": "US",
+      "index": "FTSE Developed All Cap ex US Index",
+      "group": "developed_ex_us",
+      "currency": "USD",
+      "ter_pct": 0.03,
+      "ter_as_of": "2026-04-28",
+      "aum_usd": 231600000000,
+      "aum_scope": "etf_share_class",
+      "aum_as_of": "2026-09-30",
+      "as_of_date": "2026-09-30",
+      "retrieved_at": "2026-10-28",
+      "source_url": "https://investor.vanguard.com/investment-products/etfs/profile/vea",
+      "quotes": {
+        "ter": "\"expenseRatio\":\"0.0300\",\"expenseRatioAsOfDate\":\"2026-04-28T00:00:00-04:00\"",
+        "aum": "\"shareClassTotalNetAssets\":\"$231.6 billion\",\"shareClassTotalNetAssetsDate\":\"2026-09-30T00:00:00-04:00\"",
+        "exchange": "The fund’s ETF Shares are listed for trading on NYSE Arca",
+        "index": "\"benchmarkShortName\":\"FTSE Developed All Cap ex US Index\""
+      },
+      "ucits_twin_ids": [],
+      "evidence_urls": [
+        "https://investor.vanguard.com/vmf/api/VEA/profile",
+        "https://investor.vanguard.com/vmf/api/VEA/characteristic"
+      ]
+    },
+    {
+      "ticker": "VWO",
+      "name": "Vanguard FTSE Emerging Markets ETF",
+      "issuer": "Vanguard",
+      "exchange": "NYSE Arca",
+      "domicile": "US",
+      "index": "FTSE Emerging ACap CN A Inclus Idx",
+      "group": "emerging",
+      "currency": "USD",
+      "ter_pct": 0.06,
+      "ter_as_of": "2026-02-27",
+      "aum_usd": 125400000000,
+      "aum_scope": "etf_share_class",
+      "aum_as_of": "2026-09-30",
+      "as_of_date": "2026-09-30",
+      "retrieved_at": "2026-10-28",
+      "source_url": "https://investor.vanguard.com/investment-products/etfs/profile/vwo",
+      "quotes": {
+        "ter": "\"expenseRatio\":\"0.0600\",\"expenseRatioAsOfDate\":\"2026-02-27T00:00:00-05:00\"",
+        "aum": "\"shareClassTotalNetAssets\":\"$125.4 billion\",\"shareClassTotalNetAssetsDate\":\"2026-09-30T00:00:00-04:00\"",
+        "exchange": "The fund’s ETF Shares are listed for trading on NYSE Arca",
+        "index": "\"benchmarkShortName\":\"FTSE Emerging ACap CN A Inclus Idx\""
+      },
+      "ucits_twin_ids": [
+        "IE00BKM4GZ66"
+      ],
+      "evidence_urls": [
+        "https://investor.vanguard.com/vmf/api/VWO/profile",
+        "https://investor.vanguard.com/vmf/api/VWO/characteristic"
+      ]
+    },
+    {
+      "ticker": "IEMG",
+      "name": "iShares Core MSCI Emerging Markets ETF",
+      "issuer": "BlackRock iShares",
+      "exchange": "NYSE Arca",
+      "domicile": "US",
+      "index": "MSCI Emerging Markets Investable Market Index (USD) (Net)",
+      "group": "emerging",
+      "currency": "USD",
+      "ter_pct": 0.09,
+      "ter_as_of": null,
+      "aum_usd": 150391423628,
+      "aum_scope": "fund",
+      "aum_as_of": "2026-10-27",
+      "as_of_date": "2026-10-27",
+      "retrieved_at": "2026-10-28",
+      "source_url": "https://www.ishares.com/us/products/244050/ishares-core-msci-emerging-markets-etf",
+      "quotes": {
+        "ter": "Expense Ratio: Fees as stated in the prospectus 0.09%",
+        "aum": "Net Assets of Fund $150,391,423,628 as of Oct 27, 2026",
+        "exchange": "Exchange NYSE Arca",
+        "index": "Benchmark Index MSCI Emerging Markets Investable Market Index (USD) (Net)"
+      },
+      "ucits_twin_ids": [
+        "IE00BKM4GZ66"
+      ],
+      "evidence_urls": []
+    },
+    {
+      "ticker": "AGG",
+      "name": "iShares Core U.S. Aggregate Bond ETF",
+      "issuer": "BlackRock iShares",
+      "exchange": "NYSE Arca",
+      "domicile": "US",
+      "index": "Bloomberg US Aggregate Bond Index",
+      "group": "us_bonds",
+      "currency": "USD",
+      "ter_pct": 0.03,
+      "ter_as_of": null,
+      "aum_usd": 139400019805,
+      "aum_scope": "fund",
+      "aum_as_of": "2026-10-27",
+      "as_of_date": "2026-10-27",
+      "retrieved_at": "2026-10-28",
+      "source_url": "https://www.ishares.com/us/products/239458/ishares-core-u-s-aggregate-bond-etf",
+      "quotes": {
+        "ter": "Expense Ratio: Fees as stated in the prospectus 0.03%",
+        "aum": "Net Assets of Fund $139,400,019,805 as of Oct 27, 2026",
+        "exchange": "Exchange NYSE Arca",
+        "index": "Benchmark Index Bloomberg US Aggregate Bond Index"
+      },
+      "ucits_twin_ids": [
+        "IE00BYXYYM63"
+      ],
+      "evidence_urls": []
+    }
+  ],
+  "ucits": [
+    {
+      "isin": "IE000XZSV718",
+      "ticker": "SPYL",
+      "name": "State Street SPDR S&P 500 UCITS ETF (Acc)",
+      "issuer": "State Street Global Advisors",
+      "domicile": "IE",
+      "index": "S&P 500 Index",
+      "distribution": "accumulating",
+      "currency": "USD",
+      "ter_pct": 0.03,
+      "ter_as_of": "2026-10-28",
+      "aum_usd": 19701240000,
+      "aum_scope": "share_class",
+      "aum_as_of": "2026-10-27",
+      "as_of_date": "2026-10-27",
+      "retrieved_at": "2026-10-28",
+      "source_url": "https://www.ssga.com/cz/en_gb/institutional/etfs/state-street-spdr-sp-500-ucits-etf-acc-spyl-gy",
+      "evidence_urls": [],
+      "quotes": {
+        "ter": "Fund Information as of 28 Oct 2026 … Trading Cycle DD TER 0,03% Benchmark",
+        "aum": "Fund Net Asset Value as of 27 Oct 2026 NAV USD (Official NAV) $19,13 NAV EUR €17,17 NAV GBP £14,37 NAV MXN MXN $356,56 Share Class Assets $19 701,24 M",
+        "isin": "ISIN IE000XZSV718",
+        "registration": "Countries of Registration Austria, Czech Republic"
+      },
+      "us_counterparts": [
+        "SPY",
+        "IVV",
+        "VOO",
+        "SPYM"
+      ],
+      "index_match": {
+        "SPY": "same",
+        "IVV": "same",
+        "VOO": "same",
+        "SPYM": "same"
+      }
+    },
+    {
+      "isin": "IE00B5BMR087",
+      "ticker": "CSPX",
+      "name": "iShares Core S&P 500 UCITS ETF (Acc)",
+      "issuer": "BlackRock iShares",
+      "domicile": "IE",
+      "index": "S&P 500 Index",
+      "distribution": "accumulating",
+      "currency": "USD",
+      "ter_pct": 0.07,
+      "ter_as_of": null,
+      "aum_usd": 156574731148,
+      "aum_scope": "share_class",
+      "aum_as_of": "2026-10-27",
+      "as_of_date": "2026-10-27",
+      "retrieved_at": "2026-10-28",
+      "source_url": "https://www.ishares.com/uk/individual/en/products/253743/ishares-sp-500-b-ucits-etf-acc-fund",
+      "evidence_urls": [],
+      "quotes": {
+        "ter": "Total Expense Ratio 0.07% Use of Income Accumulating Domicile Ireland",
+        "aum": "Key Facts Net Assets as of 27/Oct/2026 USD 156,574,731,148",
+        "isin": "ISIN IE00B5BMR087",
+        "index": "Benchmark Index S&P 500 Index"
+      },
+      "us_counterparts": [
+        "SPY",
+        "IVV",
+        "VOO",
+        "SPYM"
+      ],
+      "index_match": {
+        "SPY": "same",
+        "IVV": "same",
+        "VOO": "same",
+        "SPYM": "same"
+      }
+    },
+    {
+      "isin": "IE00B3YLTY66",
+      "ticker": "SPYI",
+      "name": "State Street SPDR MSCI All Country World Investable Market UCITS ETF (Acc)",
+      "issuer": "State Street Global Advisors",
+      "domicile": "IE",
+      "index": "MSCI ACWI IMI",
+      "distribution": "accumulating",
+      "currency": "USD",
+      "ter_pct": 0.17,
+      "ter_as_of": "2026-09-30",
+      "aum_usd": 9430260000,
+      "aum_scope": "share_class",
+      "aum_as_of": "2026-10-27",
+      "as_of_date": "2026-10-27",
+      "retrieved_at": "2026-10-28",
+      "source_url": "https://www.ssga.com/cz/en_gb/institutional/etfs/state-street-spdr-msci-all-country-world-investable-market-ucits-etf-acc-spyi-gy",
+      "evidence_urls": [],
+      "quotes": {
+        "ter": "TER 0,17% as of 30 Sep 2026",
+        "aum": "Fund Net Asset Value as of 27 Oct 2026 NAV USD (Official NAV) $13,13 NAV EUR €11,78 Share Class Assets $9 430,26 M",
+        "isin": "ISIN IE00B3YLTY66",
+        "registration": "Countries of Registration Austria, Czech Republic"
+      },
+      "us_counterparts": [
+        "VT"
+      ],
+      "index_match": {
+        "VT": "similar"
+      }
+    },
+    {
+      "isin": "IE00BKM4GZ66",
+      "ticker": "EIMI",
+      "name": "iShares Core MSCI EM IMI UCITS ETF (Acc)",
+      "issuer": "BlackRock iShares",
+      "domicile": "IE",
+      "index": "MSCI Emerging Markets Investable Market Index (USD) (Net)",
+      "distribution": "accumulating",
+      "currency": "USD",
+      "ter_pct": 0.18,
+      "ter_as_of": null,
+      "aum_usd": 42153956578,
+      "aum_scope": "share_class",
+      "aum_as_of": "2026-10-27",
+      "as_of_date": "2026-10-27",
+      "retrieved_at": "2026-10-28",
+      "source_url": "https://www.ishares.com/uk/individual/en/products/264659/ishares-msci-emerging-markets-imi-ucits-etf",
+      "evidence_urls": [],
+      "quotes": {
+        "ter": "Total Expense Ratio 0.18% Use of Income Accumulating Domicile Ireland",
+        "aum": "Key Facts Net Assets as of 27/Oct/2026 USD 42,153,956,578",
+        "isin": "ISIN IE00BKM4GZ66",
+        "index": "Benchmark Index MSCI Emerging Markets Investable Market Index (USD) (Net)"
+      },
+      "us_counterparts": [
+        "IEMG",
+        "VWO"
+      ],
+      "index_match": {
+        "IEMG": "same",
+        "VWO": "similar"
+      }
+    },
+    {
+      "isin": "IE00BYXYYM63",
+      "ticker": "IUAA",
+      "name": "iShares US Aggregate Bond UCITS ETF (USD Acc)",
+      "issuer": "BlackRock iShares",
+      "domicile": "IE",
+      "index": "Bloomberg U.S. Aggregate Bond Index",
+      "distribution": "accumulating",
+      "currency": "USD",
+      "ter_pct": 0.25,
+      "ter_as_of": null,
+      "aum_usd": 4430949981,
+      "aum_scope": "share_class",
+      "aum_as_of": "2026-10-27",
+      "as_of_date": "2026-10-27",
+      "retrieved_at": "2026-10-28",
+      "source_url": "https://www.ishares.com/uk/individual/en/products/287339/ishares-us-aggregate-bond-ucits-etf",
+      "evidence_urls": [],
+      "quotes": {
+        "ter": "Total Expense Ratio 0.25% Use of Income Accumulating Domicile Ireland",
+        "aum": "Key Facts Net Assets of Share Class as of 27/Oct/2026 USD 4,430,949,981",
+        "isin": "ISIN IE00BYXYYM63",
+        "index": "Benchmark Index Bloomberg U.S. Aggregate Bond Index"
+      },
+      "us_counterparts": [
+        "AGG"
+      ],
+      "index_match": {
+        "AGG": "same"
+      }
+    }
+  ],
+  "notes": [
+    "iShares UK pages show an investor-type/terms interstitial to first-time visitors; the figures were read from the page after the interstitial.",
+    "Vanguard US AUM is the ETF share class figure as published (rounded by Vanguard to 0.1 bn / 0.1 tn); Vanguard also publishes a larger all-share-class fund total, deliberately not used.",
+    "ter_as_of is null where the source shows the expense ratio without a date; the page must then show the retrieval date instead.",
+    "currency is the fund base / share-class currency as stated by the issuer (USD for every row). European listings of UCITS rows can trade in other currencies (the SPYL page lists 'Trading Currency EUR, GBP, MXN, USD'); trading currency is not part of this dataset."
+  ]
+}

@@ -1,0 +1,46 @@
+# Decisions log
+
+Append-only. Each entry is one line: date, owner, decision, and the reason.
+
+- 2026-10-28 [architect] The offer is a gated list of UCITS counterparts (ISIN, TER, source), delivered on the page right after submit. Reason: it solves the visitor's real next problem (they can't buy the US ETF) and needs no email infrastructure.
+- 2026-10-28 [architect] The calculator and the full US ETF table stay ungated. Reason: the brief says "value first, then email", and showing value before the form is a CLAUDE.md requirement.
+- 2026-10-28 [architect] The first ask is a locked row inside the calculator result. The form sits after the calculator and the PRIIPs note. No modal, no popup, no ask above the fold. Reason: ask at peak intent, after both value and need are shown.
+- 2026-10-28 [architect] The calculator renders a default result on load (500 000 Kč, 20 let, SPY vs SPYM). Reason: value is visible without any input. SPY vs SPYM is the largest TER gap within the same index in the dataset.
+- 2026-10-28 [architect] The fee formula assumes 0 % gross return: amount × (1 − (1 − TER)^years). Reason: it shows cost only, with no return projection that could read as a forecast or advice.
+- 2026-10-28 [architect] Ad variants map to routes (`/` = A fees, `/b` = B access). UTMs only label traffic. Reason: static pages, no layout shift from client-side swaps, and they still work if UTMs are stripped.
+- 2026-10-28 [architect] Hero ratio "4,7×" is computed from data (max/min TER in the sp500 group, floored to 1 decimal). Reason: no hardcoded figures on the page. The ads are static and must be re-checked after a data refresh.
+- 2026-10-28 [architect] The architect owns and produced `data/etfs.json` in stage 1. Reason: the figures had to be researched and verified to write the ads and plan. Re-scraping in parallel stage-2 agents would duplicate work and risk divergence.
+- 2026-10-28 [architect] No data-refresh script in scope; refresh is a manual architect task. Reason: deadline 2026-10-30, and issuer pages differ per site (HTML vs JSON endpoints).
+- 2026-10-28 [architect] Dataset: 11 NYSE Arca ETFs (SPY, IVV, VOO, SPYM, VTI, ITOT, VT, VEA, VWO, IEMG, AGG) and 5 UCITS counterparts (SPYL, CSPX, SPYI, EIMI, IUAA). Reason: same-index groups make the fee comparison fair. Every row's exchange was verified on the issuer page.
+- 2026-10-28 [architect] Excluded Nasdaq/Cboe listings (e.g. QQQ, VXUS, BND). Reason: the brief says NYSE-listed. Vanguard's BND/VXUS pages state "Nasdaq".
+- 2026-10-28 [architect] Excluded SCHD. Reason: schwabassetmanagement.com returned 403 on robots.txt, so we treated the site as not crawlable.
+- 2026-10-28 [architect] Excluded Vanguard UCITS (VUAA, VWCE). Reason: the page HTML gives no fund size or dated TER, and we prefer exclusion over rows without an as-of date.
+- 2026-10-28 [architect] Vanguard US AUM uses the ETF share-class figure, as published (rounded). Reason: the all-share-class fund total includes mutual-fund classes and is not comparable to single-class ETFs.
+- 2026-10-28 [architect] `ter_as_of` is null when the issuer shows the TER without a date (iShares). Reason: never invent a date. The page shows the retrieval date instead.
+- 2026-10-28 [architect] VT↔SPYI and VWO↔EIMI are labelled "similar index", not "same". Reason: FTSE Global All Cap ≠ MSCI ACWI IMI, and FTSE Emerging ≠ MSCI EM IMI.
+- 2026-10-28 [architect] The page is an educational comparison and states before the form that US ETFs are generally not available to EU retail investors (no PRIIPs KID). Reason: honesty, sourced to EP question E-004745/2021 and justETF.
+- 2026-10-28 [architect] We do not name brokers or claim a UCITS ETF is available at any specific broker. Reason: not verified. Only State Street pages state Czech registration.
+- 2026-10-28 [architect] US withholding tax / W-8BEN is not mentioned. Reason: it does not apply to the UCITS path, and no primary source was cited.
+- 2026-10-28 [architect] Email-only form plus a mandatory, unchecked marketing-consent checkbox. Reason: fewest fields, with a valid GDPR consent record.
+- 2026-10-28 [architect] Unlock is conditional on newsletter consent, and the trade is stated openly. Reason: the brief requires a lead magnet. GDPR Art. 7(4) risk is flagged for legal review (plan §15 Q5).
+- 2026-10-28 [architect] Single opt-in at launch. No email is sent by the system, and double opt-in is required before the first marketing send. Reason: value is delivered on the page. Sending email needs an ESP and user confirmation (CLAUDE.md), which is not possible by launch.
+- 2026-10-28 [architect] Consent text is versioned `cz-2026-10-28-v1`, and the API rejects other versions. Reason: proves which wording each lead agreed to.
+- 2026-10-28 [architect] Storage is Upstash Redis free tier (EU, Frankfurt) via the Vercel Marketplace, and the same Redis serves rate limiting. Reason: free, serverless-friendly, one service for two needs, EU region.
+- 2026-10-28 [architect] There is a `STORAGE_DRIVER=memory` driver for tests and local e2e, refused on `VERCEL_ENV=production`. Reason: tests need isolation without network, and production must never silently lose leads.
+- 2026-10-28 [architect] Duplicate email returns the same 200 `{ok:true}` and does not overwrite. Reason: avoids email enumeration and keeps the original consent record.
+- 2026-10-28 [architect] Honeypot field `website`. If filled, return 200 without storing. Reason: don't tip off bots.
+- 2026-10-28 [architect] Rate limit is 5 POSTs per IP per 600 s sliding window, counting invalid requests too. Reason: enough for typo retries, and it blocks scripted abuse.
+- 2026-10-28 [architect] No IP or user agent is stored with leads. Reason: GDPR data minimisation. The IP is used only transiently as the rate-limit key.
+- 2026-10-28 [architect] Route handlers use Web `Request`/`Response` without `next/server` or `server-only`, and read env lazily. Reason: lets the tests agent import the handlers directly in Vitest.
+- 2026-10-28 [architect] The web agent installs all deps, including api's (zod, @upstash/redis, @upstash/ratelimit), in its first scaffold commit. Reason: `package.json` has one owner, and parallel agents must not both edit it.
+- 2026-10-28 [architect] `data/etfs.json` stays at the repo root and is statically imported. `next.config.ts` sets `outputFileTracingRoot` and `turbopack.root` to the repo root. Reason: the pipeline and tests expect `data/etfs.json`, and bundling avoids runtime filesystem reads.
+- 2026-10-28 [architect] Analytics is Umami Cloud Hobby (free, cookieless) and is loaded only after opt-in via a non-modal consent bar. Reason: Vercel Web Analytics custom events need Pro, and opt-in follows a conservative reading of EDPB Guidelines 2/2023.
+- 2026-10-28 [architect] Leads are also counted server-side (`stats:leads:<variant>:<date>`). Reason: conversion ground truth regardless of analytics consent.
+- 2026-10-28 [architect] Every sent event is mirrored to `window.__lpEvents`. Reason: deterministic e2e verification without calling Umami. It contains no PII.
+- 2026-10-28 [architect] No Meta Pixel / Conversions API at launch. Reason: it would require a full consent manager. Open question for the user.
+- 2026-10-28 [architect] Functions run in region `fra1`. Reason: close to Czech users and to the EU Redis.
+- 2026-10-28 [architect] Operator identity is not invented. The production build fails while `site-config` values are empty, and previews show a visible gap notice. Reason: the values are unknown, and a launch without them is non-compliant.
+- 2026-10-28 [architect] Flagged that the Vercel Hobby plan is non-commercial only, so production ads need Pro. Reason: Vercel docs say "Hobby plan restricts users to non-commercial, personal use only".
+- 2026-10-28 [architect] Expected conversion is about 4 % (range 2.5–6 %), anchored on Unbounce's investing median of 3.9 %. Every other input is labelled as an assumption. Reason: no own data yet, and CLAUDE.md forbids invented metrics.
+- 2026-10-28 [architect] A/B order: inline ask > live proof in hero > sticky CTA. Reason: ranked by expected effect on lead_success / lp_view, and the sample sizes are given in plan §14.3.
+- 2026-10-28 [architect] Cut order if behind: sort toggle, then sticky CTA, then copy-ISIN. Never cut data, sources, consent or measurement. Reason: follows pipeline.md guidance.
