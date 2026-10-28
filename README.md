@@ -31,7 +31,7 @@ npm run test:e2e              # playwright test (360×740, builds and starts the
 
 ## 3. Results
 
-- **Automated tests** (docs/test-findings.md, final run 2026-10-28 on commit `5ce2fa5`): Vitest **73/73** (data 17, unit 5, API 51), Playwright **57/57**. These counts predate critic fix round 1 (commit `9836d77` and later); a re-run after round 1 is not recorded here.
+- **Automated tests** (docs/test-findings.md, run 2026-10-28 on commit `45befe1`, after critic fix round 1): Vitest **77/77**, Playwright **62/62**, `tsc` clean in `tests/`. Before round 1 (on `5ce2fa5`): Vitest 73/73, Playwright 57/57.
 - **Data truthfulness:** the critic re-fetched issuer pages on 2026-10-28 and spot-checked 8 funds / 19 figures: **19 of 19 matched** (docs/critic.md). The hero ratio "4,7×" and the default calculator result (7 369 Kč) were recomputed by hand and match.
 - **Lighthouse:** not run yet.
 - **Real-phone test:** not run yet.
@@ -141,8 +141,10 @@ Full log: [docs/decisions.md](docs/decisions.md).
 - **F1** (docs/test-findings.md): the api agent's Zod schema stripped `ucits[].quotes.index` from the served dataset, losing verbatim evidence on 3 UCITS rows. Root cause was partly the architect's own plan (§7.2 did not list the key). Fixed in `bffb227`.
 - **F2** (docs/test-findings.md): the web agent's honeypot input lacked `aria-hidden="true"`, so screen readers could reach the trap field. Fixed in `5ce2fa5`.
 - **The tests agent's own tests** (docs/test-findings.md): the first E2E run had 12 extra failures caused by the tests themselves (CSS-uppercased `innerText`, Umami stub not active in every test, a wrong expectation about the consent queue after deny→grant, requiring the literal "ÚOOÚ"). Fixed without loosening the contract.
+- **Round 1 test bug** (docs/test-findings.md): the tests agent's first `/b` funnel test typed into the email field before `form_view` had registered, so `form_start` came before `form_view`. Fixed in the test; the order assertion is unchanged.
 - **Critic M1** (docs/critic.md): the planned funnel step 2 (`calc_result`) would have dropped converters who never touch the calculator; replaced by `value_view` + `form_view` and URL-split funnels.
 - **Critic M4**: the `/b` hero CTA sent variant-B visitors to the calculator instead of the European ETFs the ad promised.
+- **Round 1 `/b` scroll** (docs/decisions.md): a smooth scroll from the `/b` hero CTA swept `calc-result` through the viewport, so `value_view` reported `source: "calc"` for visitors who never looked at the calculator. Switched to an instant jump.
 - **Czech copy (critic m1)**: "protějšek" read as a translation of "counterpart" (→ "alternativa"); an English index noun inside a Czech sentence; "bil." reading as English "billion" (→ "mld. USD"); code notation (`^roky`) in consumer copy; informal register in the consent label.
 - **Framework knowledge** (docs/decisions.md): the create-next-app 16.4 template enabled Cache Components, which made the planned `dynamic` route segment config a build error (removed); the plan's `preferredRegion` export is deprecated in Next.js 16.4 and was replaced with `web/vercel.json` `"regions": ["fra1"]`.
 
