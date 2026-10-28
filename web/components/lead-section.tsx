@@ -187,6 +187,7 @@ function LeadForm({ onSuccess }: { onSuccess: () => void }) {
               type="text"
               tabIndex={-1}
               autoComplete="off"
+              aria-hidden="true"
               defaultValue=""
             />
           </label>
