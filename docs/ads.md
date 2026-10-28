@@ -37,7 +37,7 @@ Every number in the ad copy comes from `data/etfs.json`. Each figure there has i
 | Description | Data přímo od emitentů ETF | 26 |
 | Button | Zjistit více | |
 
-**Visual brief:** Two plain price tags side by side, both labelled "S&P 500". Left tag "0,0945 %", right tag "0,02 %". Small footer text: "TER dle emitentů, 28. 10. 2026". Calm palette, no arrows or charts.
+**Visual brief:** Two plain price tags side by side, both labelled "S&P 500". Left tag "0,0945 %", right tag "0,02 %". Small footer text: "TER podle emitentů, 28. 10. 2026". Calm palette, no arrows or charts.
 
 **Lands on:** `/` (hero variant A).
 
@@ -60,10 +60,10 @@ The H1 repeats the ad headline's "4,7×" and the same index name. The sub delive
 
 | Field | Copy (cs) | Chars |
 |---|---|---|
-| Primary text | Hledali jste u brokera VOO nebo SPY a nenašli je? Americká ETF nemají dokument KID, který EU vyžaduje pro drobné investory. Ukážeme vám evropská ETF se stejným indexem. | 168 |
+| Primary text | Hledali jste u brokera VOO nebo SPY a nenašli je? Americká ETF zpravidla nemají dokument KID, který EU vyžaduje pro drobné investory. Ukážeme vám evropská ETF se stejným indexem. | 178 |
 | Primary text (short alt) | Proč u evropského brokera nenajdete VOO a která ETF sledují stejný index. | 73 |
 | Headline | Proč u brokera nenajdete VOO | 28 |
-| Description | Srovnání poplatků a evropské protějšky | 38 |
+| Description | Srovnání poplatků a evropské alternativy | 40 |
 | Button | Zjistit více | |
 
 **Visual brief:** A phone screen showing a broker search field with "VOO" typed in and the empty result "Nenalezeno". Next to it, a small card: "S&P 500 · UCITS · ISIN IE…". No real broker logos or trademarks.
@@ -72,21 +72,21 @@ The H1 repeats the ad headline's "4,7×" and the same index name. The sub delive
 
 **Hero continuation (variant B):**
 - Eyebrow: `ETF z newyorské burzy NYSE Arca · data od emitentů, stažena 28. 10. 2026` (the date comes from the dataset's `retrieved_at`)
-- H1: **Proč u brokera nenajdete VOO – a co sleduje stejný index**
-- Sub: Americká ETF nemají dokument KID, který EU vyžaduje pro drobné investory. Porovnejte jejich poplatky a odemkněte evropské protějšky se stejným indexem.
-- Primary CTA: **Porovnat ETF** (scrolls to the calculator)
+- H1: **Proč u brokera nenajdete VOO – a která ETF sledují stejný index**
+- Sub: Americká ETF zpravidla nemají dokument KID, který EU vyžaduje pro drobné investory. Porovnejte jejich poplatky a odemkněte evropské alternativy se stejným indexem.
+- Primary CTA: **Ukázat evropská ETF** (scrolls to the PRIIPs block `priips-note`, which leads into the form; plan §5.1)
 - Trust line: Vzdělávací srovnání, ne investiční doporučení. Zdroje a data u každého čísla.
 
-The H1 repeats the ad headline almost word for word. The sub delivers both halves of the promise: the reason (KID) and what to do next (the European counterparts).
+The H1 repeats the ad headline and the short alt's "která ETF sledují stejný index". The sub delivers both halves of the promise: the reason (KID) and what to do next (the European alternatives). The CTA goes straight to that second half instead of the fee calculator (critic r1 M4).
 
-**Claim support for "Americká ETF nemají dokument KID…":**
+**Claim support for "Americká ETF zpravidla nemají dokument KID…":**
 - European Parliament written question E-004745/2021 (a question by an MEP, not a legal act), https://www.europarl.europa.eu/doceo/document/E-9-2021-004745_EN.pdf, retrieved 2026-10-28 (footnote markers kept): "Since 2018, ordinary investors in the European Union cannot invest in US exchange-traded funds (US ETFs) 1. This is because rules 2 came into force in 2018 requiring providers of investment products to supply retail investors with a 'key information document' (KID) to help them better understand the product they are buying. US ETFs do not provide such a document."
 - justETF, https://www.justetf.com/en/news/etf/us-domiciled-etfs.html, retrieved 2026-10-28: "If you already own a US-domiciled ETF then you can hold or sell it but you won't be able to buy more until a PRIIPs compatible KID becomes available."
-- Wording rule: the page says "zpravidla / obvykle" (generally) and never claims it is absolutely impossible. [ASSUMPTION: some routes exist, e.g. professional-client status or non-EU brokers. We did not verify them and must not describe them on the page.]
+- Wording rule: the ads and the page say "zpravidla / obvykle" (generally) and never claim it is absolutely impossible. This applies to the variant B primary text and hero sub too (r1, critic m4). [ASSUMPTION: some routes exist, e.g. professional-client status or non-EU brokers. We did not verify them and must not describe them on the page.]
 
 ---
 
 ## What we measure per variant
 - Ad platform: impressions, CTR, cost per landing-page view.
 - Page: `variant` and `utm_content` on every analytics event (plan §9). Leads are counted server-side per variant (plan §8.4).
-- Success metric per variant: `lead_success / landing-page views` (cost per lead in Ads Manager). Secondary metric: `calc_result / lp_view`.
+- Success metric per variant: `lead_success / landing-page views` (cost per lead in Ads Manager; see plan §15 Q6 for the missing Meta lead signal). Secondary metric: `value_view / lp_view` (plan §9.4).
