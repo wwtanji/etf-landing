@@ -11,8 +11,8 @@ Act as a senior AI engineer. Correct, verified, minimal, reproducible.
 
 ## Code
 - Smallest change that solves the problem. No unrequested refactors or speculative abstractions.
-- Strict types. TS: `strict`. Python 3.12+, `uv`, `ruff`, `pytest`.
-- Validate all external data (APIs, forms, scraped pages, LLM output) with Zod/Pydantic.
+- Next.js + TypeScript `strict` for everything (UI and API route handlers). `eslint`, `prettier`, `vitest`, Playwright. Optional Python only for data scripts (`scripts/*.py`).
+- Validate all external data (APIs, forms, scraped pages, LLM output) with Zod.
 - No bare `except`, no swallowed errors. Constants and env vars instead of magic values. Never commit secrets; keep `.env.example`.
 - Bug fix = failing test first. Never weaken or delete a test to get green.
 

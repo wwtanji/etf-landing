@@ -22,7 +22,7 @@ Findings sorted by severity (**blocker / major / minor**), each with: what, wher
 End with a verdict: **launch-ready / not yet**, and the top 3 fixes.
 
 ## Rules
-- Do not edit `api/`, `web/`, or `tests/`. Findings go back to the owner.
+- Do not edit `web/` or `tests/`. Findings go back to the owner.
 - Run the page and read real output; no judging from the plan alone.
 - No flattery. Every finding needs evidence.
 - Commit: `docs: add critic findings`.

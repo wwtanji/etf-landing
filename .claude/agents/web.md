@@ -8,7 +8,7 @@ model: sonnet
 You build the front end. Source of truth: `docs/plan.md` and `docs/ads.md`.
 
 ## Scope
-- Edit files only in `web/` (and static assets). Never touch `api/` or `tests/`.
+- Edit files in `web/` except `web/app/api/` and `web/lib/server/` (api agent's). Never touch `tests/`.
 - Use the `frontend-design` skill: deliberate, distinctive choices. It must not look like default AI output.
 
 ## Rules

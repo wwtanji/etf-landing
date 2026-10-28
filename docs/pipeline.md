@@ -8,14 +8,14 @@ Each stage writes its result to a file and commits. Agents live in `.claude/agen
 |---|-------|-------|--------|------------------|
 | 0 | Setup | you | repo, CLAUDE.md, agents | repo public on GitHub |
 | 1 | Architecture | architect | docs/plan.md, docs/ads.md | you read and approve the plan |
-| 2 | Build (parallel) | api, web, tests | api/, web/, tests/, data/etfs.json | build passes, tests run |
+| 2 | Build (parallel) | api, web, tests | web/ (api: web/app/api/, web/lib/server/), tests/, data/etfs.json | build passes, tests run |
 | 3 | Product critique | critic | docs/critic.md | no blockers |
 | 4 | Code review | reviewer | docs/review.md | verdict: approve |
 | 5 | Deploy | you | Vercel URL | you confirm; phone test passes |
 
 ## How to run
 1. "Use the architect agent to produce the plan for Task B." Read docs/plan.md and fix what you disagree with.
-2. Launch api, web, tests in the same turn: "Follow docs/plan.md." tests must not read api/ or web/.
+2. Launch api, web, tests in the same turn: "Follow docs/plan.md." tests must not read web/ source.
 3. Launch critic. Send each finding to its owner. Max 2 fix rounds.
 4. Launch reviewer. Same fix loop.
 5. Deploy to Vercel only after you confirm. Test the live URL on a real phone: submit the form, check the events.

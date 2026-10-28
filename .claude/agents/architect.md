@@ -17,7 +17,7 @@ You are the architect. You write the plan and contract; you do not write app cod
 7. **Data contract:** schema for `data/etfs.json` (ticker, name, TER, AUM, currency, as_of_date, source_url). Use real NYSE-listed ETFs; fetch real figures and cite them with the retrieval date. Never invent numbers.
 8. **API contract:** endpoints, request/response JSON, status codes, validation rules, consent field. Fewest possible form fields (ideally email only).
 9. **Analytics events:** names and properties for the full funnel (view, scroll, interaction, form_start, form_submit, success).
-10. **File ownership:** `api/` belongs to the api agent, `web/` to the web agent, `tests/` to the tests agent.
+10. **Stack and file ownership:** One Next.js (TypeScript) project in `web/`, deployed as a single Vercel project. API = route handlers in `web/app/api/` (no CORS needed). Optional Python only for data scripts. `web/app/api/` and `web/lib/server/` belong to the api agent; the rest of `web/` to the web agent; `tests/` to the tests agent.
 11. **Done criteria** and a short list of assumptions.
 
 ## Rules
