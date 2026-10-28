@@ -32,6 +32,8 @@ declare global {
 }
 
 const QUEUE_MAX = 50;
+/** Umami's tracker skips every send (custom events and auto pageviews) while this key is set. */
+const UMAMI_DISABLED_KEY = "umami.disabled";
 
 let commonProps: EventProps | null = null;
 let consent: AnalyticsConsent | null = null;
@@ -56,6 +58,8 @@ function storeConsent(value: "granted" | "denied"): void {
   consent = value;
   try {
     window.localStorage.setItem(CONSENT_STORAGE_KEY, value);
+    if (value === "denied") window.localStorage.setItem(UMAMI_DISABLED_KEY, "1");
+    else window.localStorage.removeItem(UMAMI_DISABLED_KEY);
   } catch (error) {
     console.warn("analytics: could not persist consent", error);
   }
@@ -84,6 +88,11 @@ function loadUmami(): void {
     umamiPending = [];
     for (const event of pending) window.umami?.track(event.name, event.props);
   };
+  script.onerror = () => {
+    // Script blocked or offline: drop the buffered events instead of keeping them forever.
+    umamiState = "none";
+    umamiPending = [];
+  };
   document.head.appendChild(script);
 }
 
@@ -91,7 +100,10 @@ function send(name: EventName, props: EventProps): void {
   window.__lpEvents ??= [];
   window.__lpEvents.push({ name, props, ts: Date.now() });
   if (umamiState === "loaded") window.umami?.track(name, props);
-  else if (umamiState === "loading") umamiPending.push({ name, props });
+  else if (umamiState === "loading") {
+    umamiPending.push({ name, props });
+    if (umamiPending.length > QUEUE_MAX) umamiPending.shift();
+  }
 }
 
 function flushQueue(): void {
@@ -132,4 +144,5 @@ export function grantAnalyticsConsent(): void {
 export function denyAnalyticsConsent(): void {
   storeConsent("denied");
   queue = [];
+  umamiPending = [];
 }
