@@ -6,6 +6,8 @@ export type EventName =
   | "lp_view"
   | "scroll_depth"
   | "section_view"
+  | "value_view"
+  | "form_view"
   | "calc_interact"
   | "calc_result"
   | "cta_click"

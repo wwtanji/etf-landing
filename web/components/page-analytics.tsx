@@ -8,7 +8,7 @@ const SCROLL_DEPTHS = [25, 50, 75, 100] as const;
 const FULL_DEPTH_RATIO = 0.98;
 const SECTION_VISIBLE_RATIO = 0.5;
 
-/** Page-level events: lp_view, scroll_depth, section_view. Renders nothing. */
+/** Page-level events: lp_view, scroll_depth, section_view, value_view, form_view. Renders nothing. */
 export function PageAnalytics({ variant }: { variant: Variant }) {
   useEffect(() => {
     initAnalytics(variant);
@@ -16,8 +16,7 @@ export function PageAnalytics({ variant }: { variant: Variant }) {
 
     const reached = new Set<number>();
     function onScroll() {
-      const ratio =
-        (window.scrollY + window.innerHeight) / document.documentElement.scrollHeight;
+      const ratio = (window.scrollY + window.innerHeight) / document.documentElement.scrollHeight;
       for (const depth of SCROLL_DEPTHS) {
         if (reached.has(depth)) continue;
         const threshold = depth === 100 ? FULL_DEPTH_RATIO : depth / 100;
@@ -31,26 +30,40 @@ export function PageAnalytics({ variant }: { variant: Variant }) {
     window.addEventListener("scroll", onScroll, { passive: true });
 
     // A section counts as viewed when ≥ 50 % of it is visible, or, for sections
-    // taller than the viewport, when it fills ≥ 50 % of the viewport.
+    // taller than the viewport, when it fills ≥ 50 % of the viewport. value_view uses the
+    // same rule on calc-result or priips-note (first wins); form_view rides on section=form.
     const seen = new Set<string>();
+    let valueSeen = false;
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
-          const section = (entry.target as HTMLElement).dataset.section;
-          if (!section || seen.has(section) || !entry.rootBounds) continue;
+          const { section, value } = (entry.target as HTMLElement).dataset;
+          if (!entry.rootBounds) continue;
           const fillsViewport =
             entry.intersectionRect.height >= entry.rootBounds.height * SECTION_VISIBLE_RATIO;
-          if (entry.intersectionRatio >= SECTION_VISIBLE_RATIO || fillsViewport) {
-            seen.add(section);
-            track("section_view", { section });
-            observer.unobserve(entry.target);
+          if (entry.intersectionRatio < SECTION_VISIBLE_RATIO && !fillsViewport) continue;
+          observer.unobserve(entry.target);
+          if (value) {
+            if (!valueSeen) {
+              valueSeen = true;
+              track("value_view", { source: value });
+            }
+            continue;
           }
+          if (!section || seen.has(section)) continue;
+          seen.add(section);
+          track("section_view", { section });
+          if (section === "priips" && !valueSeen) {
+            valueSeen = true;
+            track("value_view", { source: "priips" });
+          }
+          if (section === "form") track("form_view");
         }
       },
       // Consecutive thresholds differ by ≤ 2×, so tall sections (up to 40 viewports) still trigger.
       { threshold: [0, 0.0125, 0.025, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5] },
     );
-    for (const element of document.querySelectorAll<HTMLElement>("[data-section]")) {
+    for (const element of document.querySelectorAll<HTMLElement>("[data-section], [data-value]")) {
       observer.observe(element);
     }
 
