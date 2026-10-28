@@ -105,6 +105,41 @@ test.describe("analytics consent gating (plan §9.2–9.3)", () => {
     await page.getByTestId("hero-cta").click();
     await waitForEvent(page, "cta_click", (p) => p.location === "hero");
   });
+
+  test("withdrawing consent takes effect immediately, also across navigation to /soukromi", async ({ page, umamiScriptRequests }) => {
+    await page.goto("/");
+    await acceptConsent(page);
+    await waitForEvent(page, "lp_view");
+    await expect.poll(() => page.evaluate(() => (window.__umamiCalls ?? []).length)).toBeGreaterThan(0);
+
+    await page.getByTestId("consent-settings").scrollIntoViewIfNeeded();
+    await page.getByTestId("consent-settings").click();
+    await page.getByTestId("consent-reject").click();
+    await expect(page.getByTestId("consent-bar")).toBeHidden();
+    expect(await page.evaluate(() => localStorage.getItem("lp_analytics_consent"))).toBe("denied");
+    const rejectedAt = await page.evaluate(() => Date.now());
+    const eventsBefore = (await lpEvents(page)) ?? [];
+    const callsBefore = await page.evaluate(() => window.__umamiCalls ?? []);
+    const scriptsBefore = umamiScriptRequests.length;
+
+    // Activity that would normally fire events, then navigate via the footer link.
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await page.getByTestId("hero-cta").click();
+    await page.getByTestId("privacy-link").scrollIntoViewIfNeeded();
+    await page.getByTestId("privacy-link").click();
+    await expect(page).toHaveURL(/\/soukromi$/);
+    await page.waitForLoadState("networkidle");
+    await scrollThroughPage(page);
+    await page.waitForLoadState("networkidle");
+
+    expect(umamiScriptRequests, "Umami script reloaded after withdrawal").toHaveLength(scriptsBefore);
+    const eventsAfter = (await lpEvents(page)) ?? [];
+    expect(eventsAfter.filter((e) => typeof e.ts === "number" && e.ts >= rejectedAt), "events recorded after withdrawal").toEqual([]);
+    // Same document (client navigation) → log unchanged; new document → empty.
+    if (eventsAfter.length > 0) expect(eventsAfter).toEqual(eventsBefore);
+    const callsAfter = await page.evaluate(() => window.__umamiCalls ?? []);
+    if (callsAfter.length > 0) expect(callsAfter, "Umami track() called after withdrawal").toEqual(callsBefore);
+  });
 });
 
 test.describe("event contract (plan §9.4)", () => {

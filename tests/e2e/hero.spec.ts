@@ -1,5 +1,5 @@
 import { czDate, heroRatioText, loadDataset } from "../support/dataset";
-import { expect, norm, test, textOf } from "./fixtures";
+import { expect, norm, test, textOf, type Page } from "./fixtures";
 
 const ds = loadDataset();
 const ratio = heroRatioText(ds); // computed per plan §5.1, today "4,7"
@@ -67,6 +67,23 @@ for (const v of VARIANTS) {
   });
 }
 
+async function waitForScrollSettled(page: Page) {
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () =>
+          // tsconfig lib predates es2024 Promise.withResolvers, so the executor form is used here.
+          new Promise<boolean>((resolve) => {
+            const y0 = window.scrollY;
+            let frames = 0;
+            const tick = () => (++frames < 5 ? requestAnimationFrame(tick) : resolve(window.scrollY === y0));
+            requestAnimationFrame(tick);
+          }),
+      ),
+    )
+    .toBe(true);
+}
+
 test("hero CTA on / scrolls so calc-diff is fully visible and not under sticky-cta", async ({ page }) => {
   await page.goto("/");
   await page.getByTestId("consent-reject").click();
@@ -74,8 +91,8 @@ test("hero CTA on / scrolls so calc-diff is fully visible and not under sticky-c
   await page.getByTestId("hero-cta").click();
   const diff = page.getByTestId("calc-diff");
   await expect(diff).toBeInViewport({ ratio: 1 });
-  // Let smooth scrolling settle, then check the sticky CTA does not cover it.
-  await page.waitForTimeout(800);
+  // Wait until scrolling has settled (scrollY unchanged across several frames), then check the sticky CTA.
+  await waitForScrollSettled(page);
   await expect(diff).toBeInViewport({ ratio: 1 });
   const sticky = page.getByTestId("sticky-cta");
   if (await sticky.isVisible()) {
@@ -92,7 +109,7 @@ test("hero CTA on /b scrolls to priips-note, not the calculator", async ({ page 
   await page.getByTestId("consent-reject").click();
   await page.getByTestId("hero-cta").click();
   await expect(page.getByTestId("priips-note")).toBeInViewport();
-  await page.waitForTimeout(800);
+  await waitForScrollSettled(page);
   const top = await page.getByTestId("priips-note").evaluate((el) => el.getBoundingClientRect().top);
   expect(Math.abs(top), "priips-note top near viewport top").toBeLessThan(200);
   await expect(page.getByTestId("calc-diff")).not.toBeInViewport();
