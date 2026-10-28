@@ -12,8 +12,8 @@ export const GROUP_LABELS: Record<EtfGroup, string> = {
 
 const AUM_SCOPE_LABELS: Record<UsEtfView["aum_scope"], string> = {
   fund: "celý fond",
-  etf_share_class: "ETF třída akcií",
-  share_class: "třída akcií",
+  etf_share_class: "jen ETF třída akcií",
+  share_class: "jen tato třída akcií",
 };
 
 const DOMICILE_LABELS: Record<string, string> = {
@@ -31,11 +31,11 @@ export const MATCH_LABELS = { same: "stejný index", similar: "podobný index" }
 
 type Dated = Pick<UsEtfView, "ter_as_of" | "retrieved_at">;
 
-/** Display rule §7.2: dated TER, else "TER dle prospektu, staženo {retrieved_at}". */
+/** Display rule §7.2: "TER (stav k {ter_as_of})", else "TER podle prospektu (staženo {retrieved_at})". */
 export function terDateNote(row: Dated): string {
   return row.ter_as_of
-    ? `TER k ${formatDate(row.ter_as_of)}`
-    : `TER dle prospektu, staženo ${formatDate(row.retrieved_at)}`;
+    ? `TER (stav k ${formatDate(row.ter_as_of)})`
+    : `TER podle prospektu (staženo ${formatDate(row.retrieved_at)})`;
 }
 
 /** Fund size split into scope label and value; null when the dataset has no size. */

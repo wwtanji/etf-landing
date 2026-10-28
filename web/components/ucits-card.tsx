@@ -13,8 +13,9 @@ import {
 import type { UcitsEtfView } from "@/lib/landing-data";
 
 const TOAST_MS = 2000;
+const tickerList = new Intl.ListFormat("cs", { type: "conjunction" });
 
-/** "stejný index jako SPY, IVV" badges, limited to `tickers`. */
+/** "stejný index jako SPY a SPYM" badges, limited to `tickers`. */
 function matchBadges(ucits: UcitsEtfView, tickers: string[]): string[] {
   const byMatch = { same: [] as string[], similar: [] as string[] };
   for (const ticker of tickers) {
@@ -23,7 +24,7 @@ function matchBadges(ucits: UcitsEtfView, tickers: string[]): string[] {
   }
   return (["same", "similar"] as const)
     .filter((match) => byMatch[match].length > 0)
-    .map((match) => `${MATCH_LABELS[match]} jako ${byMatch[match].join(", ")}`);
+    .map((match) => `${MATCH_LABELS[match]} jako ${tickerList.format(byMatch[match])}`);
 }
 
 export function UcitsCard({ ucits, tickers }: { ucits: UcitsEtfView; tickers: string[] }) {

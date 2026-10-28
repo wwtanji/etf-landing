@@ -18,6 +18,7 @@ export type UsEtfView = Pick<
   | "as_of_date"
   | "retrieved_at"
   | "source_url"
+  | "evidence_urls"
   | "ucits_twin_ids"
 >;
 
@@ -52,7 +53,8 @@ export type LandingData = {
 export function getLandingData(): LandingData {
   const dataset = getEtfDataset();
   const sp500Ters = dataset.etfs.filter((e) => e.group === "sp500").map((e) => e.ter_pct);
-  if (sp500Ters.length === 0) throw new Error("data/etfs.json has no sp500 rows for the hero ratio");
+  if (sp500Ters.length === 0)
+    throw new Error("data/etfs.json has no sp500 rows for the hero ratio");
   return {
     retrievedAt: dataset.retrieved_at,
     sp500TerRatio: Math.max(...sp500Ters) / Math.min(...sp500Ters),
@@ -69,6 +71,7 @@ export function getLandingData(): LandingData {
       as_of_date: e.as_of_date,
       retrieved_at: e.retrieved_at,
       source_url: e.source_url,
+      evidence_urls: e.evidence_urls,
       ucits_twin_ids: e.ucits_twin_ids,
     })),
     ucits: dataset.ucits.map((u) => ({

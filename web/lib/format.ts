@@ -3,6 +3,7 @@ const terFormat = new Intl.NumberFormat("cs-CZ", {
   minimumFractionDigits: 2,
   maximumFractionDigits: 4,
 });
+const upToOneDecimal = new Intl.NumberFormat("cs-CZ", { maximumFractionDigits: 1 });
 const oneDecimal = new Intl.NumberFormat("cs-CZ", {
   minimumFractionDigits: 1,
   maximumFractionDigits: 1,
@@ -29,11 +30,9 @@ export function formatDate(isoDate: string): string {
   return `${Number(day)}.\u00a0${Number(month)}.\u00a0${year}`;
 }
 
-/** Fund size in USD with Czech scale words: "814,8 mld. USD", "1,0 bil. USD". */
+/** Fund size in billions of USD, max. 1 decimal (§5.5): "814,8 mld. USD", "1 000 mld. USD". */
 export function formatUsdSize(usd: number): string {
-  if (usd >= 1e12) return `${oneDecimal.format(usd / 1e12)}\u00a0bil.\u00a0USD`;
-  if (usd >= 1e9) return `${oneDecimal.format(usd / 1e9)}\u00a0mld.\u00a0USD`;
-  return `${oneDecimal.format(usd / 1e6)}\u00a0mil.\u00a0USD`;
+  return `${upToOneDecimal.format(usd / 1e9)}\u00a0mld.\u00a0USD`;
 }
 
 /** Hero ratio: floored to one decimal, cs-CZ ("4,7"). */

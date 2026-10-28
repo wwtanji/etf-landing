@@ -69,7 +69,8 @@ export function EtfTable() {
 
         <p className="mt-6 text-[0.8125rem] leading-relaxed text-ink-soft">
           Údaje z webů emitentů (State Street, iShares/BlackRock, Vanguard). Staženo{" "}
-          {formatDate(retrievedAt)}. Velikost fondu u Vanguardu je údaj za ETF třídu akcií.
+          {formatDate(retrievedAt)}. U Vanguardu uvádíme velikost jen za ETF třídu akcií, bez tříd
+          fondu, které se neobchodují na burze.
         </p>
       </div>
     </section>
@@ -108,10 +109,25 @@ function EtfRow({ etf, showGroup }: { etf: UsEtfView; showGroup: boolean }) {
           rel="noopener"
           data-testid={`etf-source-${etf.ticker}`}
           className="link"
-          onClick={() => track("source_click", { ticker: etf.ticker })}
+          onClick={() => track("source_click", { ticker: etf.ticker, link: "page" })}
         >
           web emitenta
         </a>
+        {etf.evidence_urls.length > 0 && (
+          <>
+            {" · "}
+            <a
+              href={etf.evidence_urls[0]}
+              target="_blank"
+              rel="noopener"
+              data-testid={`etf-evidence-${etf.ticker}`}
+              className="link"
+              onClick={() => track("source_click", { ticker: etf.ticker, link: "data" })}
+            >
+              zdrojová data (JSON)
+            </a>
+          </>
+        )}
       </div>
     </li>
   );
