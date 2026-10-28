@@ -6,7 +6,7 @@ A mobile-first Czech lead-magnet landing page for retail investors (25–45) who
 
 ## 2. How to run (from a clean clone)
 
-Requires Node.js and npm.
+Requires Node.js 22 LTS and npm. On Windows without a Unix shell, use `copy .env.example .env.local` instead of `cp`.
 
 ### Web app (`web/`)
 ```sh
@@ -22,7 +22,7 @@ All env variables are listed in `web/.env.example` (plan §8.5). The memory driv
 ### Tests (`tests/`)
 ```sh
 cd tests
-npm ci
+npm ci                        # run `npm ci` in web/ first: tests import web modules and the e2e suite builds web/
 npm test                      # vitest run (all: data, unit, api)
 npm run test:data             # or test:unit / test:api
 npx playwright install
