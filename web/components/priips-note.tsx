@@ -41,7 +41,7 @@ export function PriipsNote() {
           testId="priips-cta"
           className="btn btn-ink btn-arrow mt-5 w-full sm:w-auto"
         >
-          Odemknout evropské protějšky
+          Odemknout evropské alternativy
         </ScrollLink>
       </div>
     </section>

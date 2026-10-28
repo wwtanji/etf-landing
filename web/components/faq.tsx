@@ -8,7 +8,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "Proč chcete můj e-mail?",
-    a: "Výměnou za přehled evropských protějšků vám budeme posílat novinky o poplatcích ETF, nejvýše 1× měsíčně. Souhlas můžete kdykoli odvolat.",
+    a: "Výměnou za přehled evropských alternativ vám budeme posílat novinky o poplatcích ETF, nejvýše 1× měsíčně. Souhlas můžete kdykoli odvolat.",
   },
   {
     q: "Odkud jsou data?",
@@ -16,7 +16,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "Co je TER?",
-    a: "Celková nákladovost fondu za rok v procentech z investované částky. Strhává se průběžně z hodnoty fondu.",
+    a: "Celková nákladovost fondu za rok v procentech z investované částky. Strhává se průběžně z hodnoty fondu. Kalkulačka počítá poplatek za n let jako částka × (1 − (1 − TER)ⁿ), bez zhodnocení.",
   },
 ] as const;
 
