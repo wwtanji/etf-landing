@@ -2,13 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { SECTION_IDS } from "@/lib/sections";
-import { useConsentBarOpen, useUnlocked } from "@/lib/ui-store";
+import { useConsentBarOpen, useUnlockCtaInView, useUnlocked } from "@/lib/ui-store";
 import { ScrollLink } from "@/components/scroll-cta";
 
-/** Bottom bar (§3): only after the hero scrolled away; hidden while the form is in view, after unlock and while the consent bar shows. */
+/** Bottom bar (§3): only after the hero scrolled away; hidden while the form or `calc-unlock-cta` is in view, after unlock and while the consent bar shows. */
 export function StickyCta() {
   const unlocked = useUnlocked();
   const consentBarOpen = useConsentBarOpen();
+  const unlockCtaInView = useUnlockCtaInView();
   const [heroVisible, setHeroVisible] = useState(true);
   const [formVisible, setFormVisible] = useState(false);
 
@@ -27,7 +28,7 @@ export function StickyCta() {
     return () => observer.disconnect();
   }, []);
 
-  if (heroVisible || formVisible || unlocked || consentBarOpen) return null;
+  if (heroVisible || formVisible || unlockCtaInView || unlocked || consentBarOpen) return null;
 
   return (
     <div className="sticky-cta">
@@ -37,7 +38,7 @@ export function StickyCta() {
         testId="sticky-cta"
         className="btn btn-stamp w-full"
       >
-        Odemknout evropské protějšky
+        Odemknout evropské alternativy
       </ScrollLink>
     </div>
   );
