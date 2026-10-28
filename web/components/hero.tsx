@@ -33,22 +33,24 @@ export function Hero({
         ) : (
           <>
             <h1 className="hero-title">
-              Proč u brokera nenajdete <span className="hero-search">VOO</span> – a co sleduje
-              stejný index
+              Proč u brokera nenajdete <span className="hero-search">VOO</span> – a která ETF
+              sledují stejný index
             </h1>
             <p className="hero-sub">
-              Americká ETF nemají dokument KID, který EU vyžaduje pro drobné investory. Porovnejte
-              jejich poplatky a odemkněte evropské protějšky se stejným indexem.
+              Americká ETF zpravidla nemají dokument KID, který EU vyžaduje pro drobné investory.
+              Porovnejte jejich poplatky a odemkněte evropské alternativy se stejným indexem.
             </p>
           </>
         )}
         <ScrollLink
-          target={SECTION_IDS.calc}
+          target={variant === "a" ? SECTION_IDS.calc : SECTION_IDS.priips}
+          reveal={variant === "a" ? SECTION_IDS.calcDiff : undefined}
+          jump={variant === "b"}
           location="hero"
           testId="hero-cta"
           className="btn btn-stamp btn-arrow mt-6 w-full sm:w-auto"
         >
-          {variant === "a" ? "Spočítat moje poplatky" : "Porovnat ETF"}
+          {variant === "a" ? "Spočítat moje poplatky" : "Ukázat evropská ETF"}
         </ScrollLink>
         <p className="trust-line">
           Vzdělávací srovnání, ne investiční doporučení. Zdroje a data u každého čísla.

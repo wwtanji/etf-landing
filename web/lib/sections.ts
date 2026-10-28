@@ -2,6 +2,7 @@
 export const SECTION_IDS = {
   hero: "uvod",
   calc: "kalkulacka",
+  calcDiff: "kalkulacka-rozdil",
   priips: "hacek",
   form: "formular",
   table: "srovnani",
