@@ -6,7 +6,6 @@ import { checkRateLimit } from "@/lib/server/rate-limit";
 import { StorageConfigError } from "@/lib/server/storage";
 
 export const runtime = "nodejs";
-export const preferredRegion = "fra1";
 export const dynamic = "force-dynamic";
 
 function json(body: unknown, status: number, headers: Record<string, string> = {}): Response {

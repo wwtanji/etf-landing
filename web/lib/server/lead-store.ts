@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { z } from "zod";
-import { CONSENT_VERSION } from "./config";
+import { CONSENT_VERSION, LEAD_TTL_SECONDS } from "./config";
 import { getRedis, getStorageDriver, type StorageDriver } from "./storage";
 
 const LeadRecordSchema = z.object({
@@ -43,7 +43,7 @@ function statsKey(variant: "a" | "b", dateUtc: string): string {
 class UpstashLeadStore implements LeadStore {
   async saveIfAbsent(r: LeadRecord): Promise<"created" | "exists"> {
     const redis = getRedis();
-    const result = await redis.set(leadKey(r.email), JSON.stringify(r), { nx: true });
+    const result = await redis.set(leadKey(r.email), JSON.stringify(r), { nx: true, ex: LEAD_TTL_SECONDS });
     if (result === null) return "exists";
     // consented_at is ISO 8601 UTC ("…Z"), so its first 10 chars are the UTC date.
     await redis.incr(statsKey(r.variant, r.consented_at.slice(0, 10)));

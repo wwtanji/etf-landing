@@ -1,7 +1,6 @@
 import { getEtfDataset } from "@/lib/server/etfs";
 
 export const runtime = "nodejs";
-export const preferredRegion = "fra1";
 export const dynamic = "force-static";
 
 export async function GET(): Promise<Response> {
