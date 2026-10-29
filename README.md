@@ -119,12 +119,12 @@ Full log: [docs/decisions.md](docs/decisions.md).
 **User-side blockers (critic B1–B4), launch verdict "not yet":**
 - **B1** Operator identity (legal name, IČO, address, contact email) is a clearly marked DEMO placeholder (`DEMO: není skutečný provozovatel`, IČO 00000000, example.com email) so the production build passes for this assignment. Replace with real values before any paid traffic (§15 Q1).
 - **B2** Vercel Hobby is non-commercial only; production needs Pro or another arrangement (§15 Q2).
-- **B3** Umami Cloud site (EU data region) not created; no funnel event leaves the browser until `NEXT_PUBLIC_UMAMI_WEBSITE_ID`/`NEXT_PUBLIC_UMAMI_DOMAINS` are set (§15 Q8).
+- **B3** Partly resolved: an Umami Cloud site (EU data region) exists and `NEXT_PUBLIC_UMAMI_WEBSITE_ID`, `NEXT_PUBLIC_UMAMI_SCRIPT_URL` and `NEXT_PUBLIC_UMAMI_DOMAINS` are set for Production in Vercel (§15 Q8). The funnel reports are not built yet.
 - **B4** Resolved for the assignment: a free Upstash Redis (Frankfurt) is connected and one real submit worked. The test lead `deploy-check@example.com` is still in the store. The free plan allows 500 000 commands per month.
 
 **Other open questions (plan §15):** analytics consent stance (Q3); double opt-in and ESP before any marketing email (Q4); legal review of "unlock in exchange for newsletter consent", GDPR Art. 7(4) (Q5); Meta conversion signal (Q6); Meta ad review for financial products in CZ (Q7); privacy notice sign-off incl. Upstash DPF listing (Q10); pre-launch measurements (Q11).
 
-**Not run / unverified:** Lighthouse mobile and real-phone test not run; Umami delivery is unverified because no Umami site exists, so no funnel event leaves the browser on the live site (the event code is written and tested against a stub); rate limiting and the 730-day lead TTL were not checked on production. Code review: see docs/review.md (re-review of the fixes is pending).
+**Not run / unverified:** Lighthouse mobile and real-phone test not run; real Umami delivery is unverified: the site is connected through environment variables, but no full run of events and no funnel report has been checked in Umami (the event code is tested against a stub); rate limiting and the 730-day lead TTL were not checked on production. Code review: see docs/review.md (re-review of the fixes is pending).
 
 **Paid ads are on hold until legal review** of the consent mechanics (unlock in exchange for newsletter consent, consent wording, withdrawal path, legal basis). The questions for counsel are in [docs/legal-review.md](docs/legal-review.md).
 
