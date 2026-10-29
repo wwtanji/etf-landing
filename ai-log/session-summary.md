@@ -1,6 +1,6 @@
 # AI session summary
 
-This file summarizes how the project was built with AI. It is written from the repository history, not from the `/export` command, and it is not a transcript. The original Claude Code sessions of 2026-10-28 were lost on the author's machine before they were exported. Apart from the one block quoted in section 1a (copied from text the author pasted on 2026-10-29), nothing here is a verbatim quote of a prompt or of a model reply.
+This file summarizes how the project was built with AI. It is written from the repository history, not from the `/export` command, and it is not a transcript. When it was written, the sessions of 2026-10-28 were believed lost. They were later recovered from the local omp session store and rendered as transcripts in `ai-log/sessions/` (main orchestrator session plus one file per subagent); those transcripts take precedence over this summary where they differ. Apart from the one block quoted in section 1a (copied from text the author pasted on 2026-10-29), nothing here is a verbatim quote of a prompt or of a model reply.
 
 **What it is built from** (all in this repository):
 - `git log` with commit timestamps (2026-10-28 19:51 to 2026-10-29 12:54)
@@ -97,7 +97,7 @@ Written from the commit history and from the assistant's own record of this sess
 - **Deployment.** The author asked to deploy through the Vercel dashboard. The import flow stopped at a "Reauthenticate" dialog that needs an email code only the author could enter. The author later reported it as deployed, but the dashboard showed no deployment, so the assistant created one with Create Deployment on `master` (`4581a74`), which built successfully. Not verified: whether the author's own attempt also produced a deployment.
 - **Operator identity.** The production build refuses an empty operator identity (README blocker B1). The author had no real details, so on the author's instruction the assistant put clearly marked DEMO placeholders into `web/lib/site-config.ts`, updated the one e2e test that expected the empty-gap text, and logged the decision (`4581a74`).
 - **Redis.** Lead storage was not connected on production (the first `POST /api/leads` check returned 500). With the author's approval, a free Upstash Redis in Frankfurt was created and linked through the Vercel Marketplace. The integration created `KV_REST_API_*` variables while the code read `UPSTASH_REDIS_REST_*`, so the code now falls back to the `KV_*` names (`2ede761`, logged in `docs/decisions.md`, 54 API tests pass). After the redeploy, a real submit with a test email unlocked the page.
-- **Session logs.** The original sessions were no longer available, so this summary was written from the repository history instead of an `/export`.
+- **Session logs.** The original sessions were believed unavailable at the time, so this summary was written from the repository history instead of an `/export`. The 2026-10-28 sessions were later recovered into `ai-log/sessions/`.
 - **Other things the assistant skipped on purpose:** it did not set up two-factor authentication on the author's Vercel account and did not enable the model-training option in Vercel's terms dialog.
 
 ## 6. Known weaknesses of this record
