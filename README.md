@@ -123,7 +123,15 @@ Full log: [docs/decisions.md](docs/decisions.md).
 
 **Other open questions (plan §15):** analytics consent stance (Q3); double opt-in and ESP before any marketing email (Q4); legal review of "unlock in exchange for newsletter consent", GDPR Art. 7(4) (Q5); Meta conversion signal (Q6); Meta ad review for financial products in CZ (Q7); privacy notice sign-off incl. Upstash DPF listing (Q10); pre-launch measurements (Q11).
 
-**Not run / unverified:** Lighthouse mobile and real-phone test not run; no deployment, so Vercel (`fra1` region, file tracing of `../data`), Upstash and Umami delivery are unverified. The reviewer stage (docs/review.md) has not run yet.
+**Not run / unverified:** Lighthouse mobile and real-phone test not run; no deployment, so Vercel (`fra1` region, file tracing of `../data`), Upstash and Umami delivery are unverified. Code review: see docs/review.md (re-review of the fixes is pending).
+
+**Paid ads are on hold until legal review** of the consent mechanics (unlock in exchange for newsletter consent, consent wording, withdrawal path, legal basis). The questions for counsel are in [docs/legal-review.md](docs/legal-review.md).
+
+**Deferred code-review findings (docs/review.md, minor):**
+- **m1 (api):** saving a lead and incrementing the daily counter are two separate Redis writes (`web/lib/server/lead-store.ts`). If the second fails, `stats:leads:*` undercounts. Fix: one `MULTI`/pipeline transaction.
+- **m2 (api):** the whole request body is read before the 4 KB size check. Fix: check `Content-Length` first and stop reading the stream after 4096 bytes.
+- **m5 (web/architect):** the pre-consent event queue drops the oldest event first, so `lp_view` (the top of the funnel) is lost first. Fix: always keep `lp_view`, drop later events instead.
+- **m7 (tests):** no automated test runs the Upstash code path (730-day TTL, daily counter, rate limiter). It is only exercised in production; the stage-4 end-to-end test must check it manually.
 
 **Not covered by automated tests** (docs/test-findings.md): the Upstash driver against real Redis; the log-line content on a real store failure; the production-build guard for empty operator data; real Umami delivery and the funnel report; the `calc_result` 10-per-load cap beyond an upper bound; the ≥ 768 px table layout; copy-ISIN toast timing; static generation of `/` and `/b` beyond the build log.
 
