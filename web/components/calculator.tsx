@@ -290,10 +290,7 @@ export function Calculator() {
               </>
             ) : (
               <>
-                <p>
-                  Evropská alternativa: <span aria-hidden="true">🔒</span> ISIN, TER a poplatek v Kč
-                  po odemčení
-                </p>
+                <p>Evropská alternativa: ISIN, TER a poplatek v Kč po odemčení</p>
                 <ScrollLink
                   ref={observeUnlockCta}
                   target={SECTION_IDS.form}
