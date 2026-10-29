@@ -31,12 +31,12 @@ let redis: Redis | null = null;
 
 export function getRedis(): Redis {
   if (redis) return redis;
-  const url = process.env.UPSTASH_REDIS_REST_URL?.trim();
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN?.trim();
+  const url = (process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL)?.trim();
+  const token = (process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN)?.trim();
   if (!url || !token) {
     throw new StorageConfigError(
       "storage_misconfigured",
-      "UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN must be set",
+      "UPSTASH_REDIS_REST_URL/TOKEN (or the Vercel integration's KV_REST_API_URL/TOKEN) must be set",
     );
   }
   redis = new Redis({ url, token });
