@@ -2,7 +2,7 @@
 
 A mobile-first Czech lead-magnet landing page for retail investors (25–45) who arrive from a Meta ad. The page shows value first: a fee calculator that turns the annual fee (TER) into Kč for the visitor's amount and horizon, comparing NYSE Arca ETFs that track the same index; a sourced comparison table of 11 NYSE Arca ETFs; and an honest note on why Czech retail investors generally cannot buy US ETFs (PRIIPs/KID). In exchange for an email plus newsletter consent, the page unlocks "Evropské alternativy": European UCITS ETFs that track the same or a similar index, with ISIN, TER, fund size, source and date, delivered right on the page. Two ad variants map to two routes: `/` (A, "Fees") and `/b` (B, "Access"). Stack: Next.js 16.4 (one app in `web/`, API routes included), Upstash Redis, and Umami Cloud loaded only after consent.
 
-**Live URL:** Not deployed yet (see [Known gaps](#9-known-gaps)).
+**Live URL:** https://etf-landing-smoky.vercel.app (Vercel Hobby, production deploy of `master`; `/` is ad A, `/b` is ad B). Leads are stored in a free Upstash Redis in Frankfurt (fra1). Operator details in the footer are DEMO placeholders (see [Known gaps](#9-known-gaps)).
 
 ## 2. How to run (from a clean clone)
 
@@ -35,6 +35,7 @@ npm run test:e2e              # playwright test (360×740, builds and starts the
 - **Data truthfulness:** the critic re-fetched issuer pages on 2026-10-28 and spot-checked 8 funds / 19 figures: **19 of 19 matched** (docs/critic.md). The hero ratio "4,7×" and the default calculator result (7 369 Kč) were recomputed by hand and match.
 - **Lighthouse:** not run yet.
 - **Real-phone test:** not run yet.
+- **Live deploy check** (2026-10-29, commit `2ede761`): `/`, `/b`, `/soukromi`, `/api/etfs` return 200; `POST /api/leads` returns 422 on invalid input; one real submit through the form with a test email (`deploy-check@example.com`) showed the unlocked UCITS list. Checked by hand in Chrome, not by an automated test.
 
 ## 4. Section order and why (plan §5)
 
@@ -111,19 +112,19 @@ Full log: [docs/decisions.md](docs/decisions.md).
 6. Email-only form with a mandatory, unchecked, versioned marketing consent (`cz-2026-10-28-v2`); duplicates return the same 200; honeypot; 5 POSTs per IP per 600 s; no IP or user agent stored; lead TTL 730 days.
 7. Upstash Redis (EU, Frankfurt) for leads and rate limiting; `STORAGE_DRIVER=memory` for tests, refused in production.
 8. Umami Cloud loaded only after opt-in; leads also counted server-side; no Meta Pixel/CAPI at launch (user decision, §15 Q6).
-9. Operator identity is never invented: the production build fails while it is empty.
+9. Operator identity is never presented as real: the production build fails while it is empty, and for this assignment it holds clearly marked DEMO placeholders instead.
 
 ## 9. Known gaps
 
 **User-side blockers (critic B1–B4), launch verdict "not yet":**
-- **B1** Operator identity (legal name, IČO, address, contact email) is empty; footer and `/soukromi` show gap text (§15 Q1).
+- **B1** Operator identity (legal name, IČO, address, contact email) is a clearly marked DEMO placeholder (`DEMO: není skutečný provozovatel`, IČO 00000000, example.com email) so the production build passes for this assignment. Replace with real values before any paid traffic (§15 Q1).
 - **B2** Vercel Hobby is non-commercial only; production needs Pro or another arrangement (§15 Q2).
 - **B3** Umami Cloud site (EU data region) not created; no funnel event leaves the browser until `NEXT_PUBLIC_UMAMI_WEBSITE_ID`/`NEXT_PUBLIC_UMAMI_DOMAINS` are set (§15 Q8).
-- **B4** Production Upstash Redis not connected; one real submit on the production URL still needed (§15 Q9).
+- **B4** Resolved for the assignment: a free Upstash Redis (Frankfurt) is connected and one real submit worked. The test lead `deploy-check@example.com` is still in the store. The free plan allows 500 000 commands per month.
 
 **Other open questions (plan §15):** analytics consent stance (Q3); double opt-in and ESP before any marketing email (Q4); legal review of "unlock in exchange for newsletter consent", GDPR Art. 7(4) (Q5); Meta conversion signal (Q6); Meta ad review for financial products in CZ (Q7); privacy notice sign-off incl. Upstash DPF listing (Q10); pre-launch measurements (Q11).
 
-**Not run / unverified:** Lighthouse mobile and real-phone test not run; no deployment, so Vercel (`fra1` region, file tracing of `../data`), Upstash and Umami delivery are unverified. Code review: see docs/review.md (re-review of the fixes is pending).
+**Not run / unverified:** Lighthouse mobile and real-phone test not run; Umami delivery is unverified because no Umami site exists, so no funnel event leaves the browser on the live site (the event code is written and tested against a stub); rate limiting and the 730-day lead TTL were not checked on production. Code review: see docs/review.md (re-review of the fixes is pending).
 
 **Paid ads are on hold until legal review** of the consent mechanics (unlock in exchange for newsletter consent, consent wording, withdrawal path, legal basis). The questions for counsel are in [docs/legal-review.md](docs/legal-review.md).
 
@@ -158,4 +159,4 @@ Full log: [docs/decisions.md](docs/decisions.md).
 
 ## 11. AI session log
 
-Agent sessions are exported with `/export` into [`ai-log/`](ai-log/) (per docs/pipeline.md).
+`ai-log/` holds `/export` files only of sessions that still exist. The earlier agent sessions of 2026-10-28 (architect, api, web, tests, critic, reviewer) were lost on the author's machine before they were exported, so they are not included. What they produced is in git history and in `docs/plan.md`, `docs/decisions.md`, `docs/critic.md`, `docs/review.md` and `docs/test-findings.md`. The claims in section 10 about where the AI was wrong are taken from those documents, not from the lost sessions.
