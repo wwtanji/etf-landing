@@ -5,10 +5,10 @@
  * production build (see next.config.ts).
  */
 export const siteConfig = {
-  operatorName: "",
-  operatorId: "",
-  operatorAddress: "",
-  contactEmail: "",
+  operatorName: "DEMO: není skutečný provozovatel (ukázková stránka)",
+  operatorId: "00000000",
+  operatorAddress: "DEMO adresa, Praha",
+  contactEmail: "demo@example.com",
 } satisfies Record<string, string>;
 
 export type OperatorField = keyof typeof siteConfig;

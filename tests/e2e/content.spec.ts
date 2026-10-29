@@ -98,8 +98,8 @@ test("risk disclaimer is present verbatim and visible", async ({ page }) => {
   expect(await textOf(d)).toContain(DISCLAIMER);
 });
 
-test("operator gap is flagged, not invented (site-config empty)", async ({ page }) => {
-  await expect(page.getByText("Údaje provozovatele doplníme před spuštěním").first()).toBeAttached();
+test("operator identity is clearly marked as demo, not invented", async ({ page }) => {
+  await expect(page.getByText("DEMO: není skutečný provozovatel").first()).toBeAttached();
 });
 
 test("PRIIPs note and FAQ are present", async ({ page }) => {
