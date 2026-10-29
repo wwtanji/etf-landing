@@ -150,7 +150,7 @@ function LeadForm({ onSuccess }: { onSuccess: () => void }) {
 
   return (
     <div data-testid="lead-form">
-      <SectionLabel index="03">Evropské alternativy</SectionLabel>
+      <SectionLabel>Evropské alternativy</SectionLabel>
       <h2 className="font-display text-[1.75rem] leading-[1.1] font-semibold tracking-tight">
         Které evropské ETF sledují stejný index?
       </h2>
@@ -258,7 +258,7 @@ function ThankYou({ headingRef }: { headingRef: RefObject<HTMLHeadingElement | n
 
   return (
     <div data-testid="thank-you">
-      <SectionLabel index="03">Odemčeno</SectionLabel>
+      <SectionLabel>Odemčeno</SectionLabel>
       <h2
         ref={headingRef}
         tabIndex={-1}
@@ -293,9 +293,7 @@ function ThankYou({ headingRef }: { headingRef: RefObject<HTMLHeadingElement | n
 
       {others.length > 0 && (
         <>
-          <h3 className="mt-9 font-mono text-xs tracking-[0.14em] text-paper/70 uppercase">
-            Další indexy
-          </h3>
+          <h3 className="mt-9 text-sm font-semibold text-paper/70">Další indexy</h3>
           <ul className="mt-3 space-y-3">
             {others.map((other) => (
               <UcitsCard key={other.isin} ucits={other} tickers={other.us_counterparts} />

@@ -59,7 +59,7 @@ export function UcitsCard({ ucits, tickers }: { ucits: UcitsEtfView; tickers: st
       </div>
 
       <div className="isin-row">
-        <span className="text-[0.7rem] tracking-[0.12em] text-ink-soft uppercase">ISIN</span>
+        <span className="text-xs text-ink-soft">ISIN</span>
         <span className="isin">{ucits.isin}</span>
         <button
           type="button"

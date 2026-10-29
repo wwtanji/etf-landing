@@ -29,11 +29,11 @@ export function Faq() {
       className="scroll-mt-4 px-5 pb-12"
     >
       <div className="mx-auto max-w-xl">
-        <SectionLabel index="05">Otázky</SectionLabel>
+        <SectionLabel>Otázky</SectionLabel>
         <h2 className="font-display text-[1.75rem] leading-[1.1] font-semibold tracking-tight">
           Na co se lidé ptají
         </h2>
-        <div className="mt-5 border-t border-ink">
+        <div className="mt-5 border-t border-line">
           {FAQ_ITEMS.map((item) => (
             <details key={item.q} className="faq-item">
               <summary>{item.q}</summary>

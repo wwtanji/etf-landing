@@ -129,7 +129,7 @@ export function Calculator() {
       className="scroll-mt-4 px-5 pt-10 pb-12"
     >
       <div className="mx-auto max-w-xl">
-        <SectionLabel index="01">Kalkulačka poplatků</SectionLabel>
+        <SectionLabel>Kalkulačka poplatků</SectionLabel>
         <h2 className="font-display text-[1.75rem] leading-[1.1] font-semibold tracking-tight">
           Kolik vás stojí roční poplatek?
         </h2>

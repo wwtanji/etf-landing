@@ -18,7 +18,7 @@ export default function PrivacyPage() {
     <>
       <main className="px-5 pt-8 pb-12">
         <article className="prose-page mx-auto max-w-xl">
-          <Link href="/" className="link font-mono text-xs tracking-[0.12em] uppercase">
+          <Link href="/" className="link text-sm">
             ← Zpět na srovnání
           </Link>
           <h1 className="mt-6 font-display text-[2rem] leading-[1.1] font-semibold tracking-tight">

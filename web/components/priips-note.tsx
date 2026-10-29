@@ -14,7 +14,7 @@ export function PriipsNote() {
       className="scroll-mt-4 px-5 pb-12"
     >
       <div className="priips mx-auto max-w-xl">
-        <SectionLabel index="02">Dostupnost</SectionLabel>
+        <SectionLabel>Dostupnost</SectionLabel>
         <h2 className="font-display text-[1.6rem] leading-[1.15] font-semibold tracking-tight">
           Háček: v Česku je většinou nekoupíte.
         </h2>

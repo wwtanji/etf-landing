@@ -7,7 +7,7 @@ export function SiteFooter() {
     <footer className="site-footer px-5 pt-10 pb-28">
       <div className="mx-auto max-w-xl space-y-6">
         <div data-testid="risk-disclaimer" className="risk">
-          <p className="font-mono text-xs tracking-[0.14em] uppercase">Upozornění na rizika</p>
+          <p className="text-sm font-semibold">Upozornění na rizika</p>
           <p className="mt-2">
             Tato stránka slouží pouze ke vzdělávacím účelům a nepředstavuje investiční doporučení,
             investiční poradenství ani nabídku investičního nástroje. Investování je spojeno s
@@ -20,7 +20,7 @@ export function SiteFooter() {
         </div>
 
         <div className="text-sm">
-          <p className="font-mono text-xs tracking-[0.14em] uppercase">Provozovatel</p>
+          <p className="text-sm font-semibold">Provozovatel</p>
           <OperatorLine className="mt-2" />
         </div>
 

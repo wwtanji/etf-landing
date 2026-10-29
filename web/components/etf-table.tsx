@@ -24,7 +24,7 @@ export function EtfTable() {
       className="scroll-mt-4 px-5 py-12"
     >
       <div className="mx-auto max-w-xl md:max-w-4xl">
-        <SectionLabel index="04">Srovnání</SectionLabel>
+        <SectionLabel>Srovnání</SectionLabel>
         <h2 className="font-display text-[1.75rem] leading-[1.1] font-semibold tracking-tight">
           Americká ETF z NYSE Arca vedle sebe
         </h2>
@@ -34,9 +34,7 @@ export function EtfTable() {
         </p>
 
         <div className="mt-5 flex items-center justify-between gap-3">
-          <span className="font-mono text-xs tracking-[0.12em] text-ink-soft uppercase">
-            {etfs.length} ETF
-          </span>
+          <span className="text-sm text-ink-soft">{etfs.length} ETF</span>
           <button
             type="button"
             data-testid="etf-sort-ter"
